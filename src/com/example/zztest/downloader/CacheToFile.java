@@ -10,15 +10,14 @@ import java.io.RandomAccessFile;
 import android.util.Log;
 
 /**
- * @author Chris_Cui
- * Class:  CacheToFile
+ * @author Chris_Cui Class: CacheToFile
  */
 
 public class CacheToFile {
 
     private static final String TAG = "CacheToFile";
 
-    public static boolean deleteFile (String filename) {
+    public static boolean deleteFile(String filename) {
         File file = new File(filename);
         if (file.exists() && file.isFile()) {
             return file.delete();
@@ -42,7 +41,7 @@ public class CacheToFile {
                 byte[] buffer = new byte[len];
                 fis.read(buffer);
 
-                ret = new String (buffer);
+                ret = new String(buffer);
 
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -91,7 +90,7 @@ public class CacheToFile {
                 e.printStackTrace();
             }
 
-            if (fos !=null) {
+            if (fos != null) {
                 try {
                     fos.close();
                 } catch (IOException e) {
@@ -114,7 +113,7 @@ public class CacheToFile {
             } catch (FileNotFoundException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
-            }catch (IOException e) {
+            } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }

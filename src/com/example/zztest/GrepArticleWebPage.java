@@ -24,181 +24,181 @@ import android.util.Log;
 public class GrepArticleWebPage {
 
     public int __index;
-    
-	private Handler mHandler;
 
-	private static final String TAG = "GrepArticleWebPage";
+    private Handler mHandler;
 
-	private int mRetry = 5;
+    private static final String TAG = "GrepArticleWebPage";
 
-	private Document mDocument;
+    private int mRetry = 5;
 
-	private String mAtricle;
+    private Document mDocument;
 
-	private String mLrcUrl;
+    private String mAtricle;
 
-	private String mTranslation;
+    private String mLrcUrl;
 
-	private String mMp3webUrl;
+    private String mTranslation;
 
-	private String mUrl;
+    private String mMp3webUrl;
 
-	private String mTranslationlink;
-	
-	ArticleFile mArticleInfo;
+    private String mUrl;
+
+    private String mTranslationlink;
+
+    ArticleFile mArticleInfo;
 
     int mProgress = 0;
 
     private int mRetryDownloadfile = 5;
-	
-	public GrepArticleWebPage(Handler handler, int index, ArticleFile item) {
-		mHandler = handler;
-		__index = index;
-		mArticleInfo = item;
+
+    public GrepArticleWebPage(Handler handler, int index, ArticleFile item) {
+        mHandler = handler;
+        __index = index;
+        mArticleInfo = item;
 
         mUrl = mArticleInfo.urlstring;
-		if (mArticleInfo.localFileName == null) {
-	        getArticleInfo(mArticleInfo.urlstring);		    
-		}
-	}
+        if (mArticleInfo.localFileName == null) {
+            getArticleInfo(mArticleInfo.urlstring);
+        }
+    }
 
-	public String getAtricle() {
-		return mAtricle;
-	}
-	
+    public String getAtricle() {
+        return mAtricle;
+    }
+
 
     public String getUrl() {
         return mUrl;
     }
 
-	public String getLrcUrl() {
-		return mLrcUrl;
-	}
+    public String getLrcUrl() {
+        return mLrcUrl;
+    }
 
-	public String getTranstion() {
-		return mTranslation;
-	}
+    public String getTranstion() {
+        return mTranslation;
+    }
 
-	public String getMp3webUrl() {
-		return mMp3webUrl;
-	}
+    public String getMp3webUrl() {
+        return mMp3webUrl;
+    }
 
-	private void getArticleInfo(final String url) {
+    private void getArticleInfo(final String url) {
 
-		// run in background thread.
-		new Thread(new Runnable() {
+        // run in background thread.
+        new Thread(new Runnable() {
 
-			@Override
-			public void run() {
+            @Override
+            public void run() {
 
-				mDocument = getWebpageDoc(url);
+                mDocument = getWebpageDoc(url);
 
-				parserDocument(mDocument);
-			}
+                parserDocument(mDocument);
+            }
 
-		}).start();
-	}
+        }).start();
+    }
 
-	protected void parserDocument(Document doc) {
-		if (doc == null) {
-			if (mRetry > 0) {
-				mRetry--;
-				Log.d(TAG, "retry to get the data.");
-				getArticleInfo(mUrl);
-			} else {
-				Message msg = mHandler.obtainMessage();
-				msg.what = Constant.FAILED_UPDATE;
-				mHandler.sendMessage(msg);
-			}
-			return;
-		}
-		Elements elements = doc.getElementsByTag("body");
-		Element mBody = elements.first();
-		Element content = mBody.getElementById("content");
-		mAtricle = content.html();
+    protected void parserDocument(Document doc) {
+        if (doc == null) {
+            if (mRetry > 0) {
+                mRetry--;
+                Log.d(TAG, "retry to get the data.");
+                getArticleInfo(mUrl);
+            } else {
+                Message msg = mHandler.obtainMessage();
+                msg.what = Constant.FAILED_UPDATE;
+                mHandler.sendMessage(msg);
+            }
+            return;
+        }
+        Elements elements = doc.getElementsByTag("body");
+        Element mBody = elements.first();
+        Element content = mBody.getElementById("content");
+        mAtricle = content.html();
 
-		Element menubar = mBody.getElementById("menubar");
-		Elements links = menubar.select("a[href]");
-		for (int i = 0; i < links.size(); i++) {
-			Element ele = links.get(i);
+        Element menubar = mBody.getElementById("menubar");
+        Elements links = menubar.select("a[href]");
+        for (int i = 0; i < links.size(); i++) {
+            Element ele = links.get(i);
 
-			String linkHref = ele.attr("href");
-			if (ele.id().equalsIgnoreCase("mp3")) {
-				mMp3webUrl = linkHref;
-			} else if (ele.id().equalsIgnoreCase("lrc")) {
-				mLrcUrl = Constant.VOA_ROOT.link + linkHref;
-			} else if (ele.id().equalsIgnoreCase("EnPage")) {
-				mTranslationlink = linkHref;
-			}
-		}
+            String linkHref = ele.attr("href");
+            if (ele.id().equalsIgnoreCase("mp3")) {
+                mMp3webUrl = linkHref;
+            } else if (ele.id().equalsIgnoreCase("lrc")) {
+                mLrcUrl = Constant.VOA_ROOT.link + linkHref;
+            } else if (ele.id().equalsIgnoreCase("EnPage")) {
+                mTranslationlink = linkHref;
+            }
+        }
 
-		if (mTranslationlink != null) {
-			mRetry = 5;
-			getTranslationContent(mTranslationlink);
-		}
+        if (mTranslationlink != null) {
+            mRetry = 5;
+            getTranslationContent(mTranslationlink);
+        }
 
-		Message msg = mHandler.obtainMessage();
-		msg.what = Constant.UPDATE_TEXT;
-		msg.obj = GrepArticleWebPage.this;
-		mHandler.sendMessage(msg);
+        Message msg = mHandler.obtainMessage();
+        msg.what = Constant.UPDATE_TEXT;
+        msg.obj = GrepArticleWebPage.this;
+        mHandler.sendMessage(msg);
 
-		if (mLrcUrl != null) {
+        if (mLrcUrl != null) {
             downloadlrcFile(mLrcUrl);
         }
-		
-		if (mMp3webUrl != null) {
-		    downloadAudioFile(mMp3webUrl);
-		} else {
-		    String filename = CACHE_PATH + "/" + mArticleInfo.key + ".txt";
 
-	        CacheToFile.writeFile(filename, mAtricle.getBytes());
+        if (mMp3webUrl != null) {
+            downloadAudioFile(mMp3webUrl);
+        } else {
+            String filename = CACHE_PATH + "/" + mArticleInfo.key + ".txt";
 
-	        mArticleInfo.localFileName = filename;
-		}
+            CacheToFile.writeFile(filename, mAtricle.getBytes());
 
-		HashMap<String, ArticleFile> map = LocalFileCache.getInstance().getLocalFileMap();
+            mArticleInfo.localFileName = filename;
+        }
+
+        HashMap<String, ArticleFile> map = LocalFileCache.getInstance().getLocalFileMap();
         map.put(mArticleInfo.key, mArticleInfo);
         LocalFileCache.getInstance().setmLocalFileMap(map);
         LocalFileCache.getInstance().wirteFile();
-	}
-	
+    }
+
 
     private void getTranslationContent(final String link) {
 
         Log.d(TAG, "link = " + link);
 
-		new Thread(new Runnable() {
+        new Thread(new Runnable() {
 
-			@Override
-			public void run() {
+            @Override
+            public void run() {
 
                 Log.d(TAG, "mTranslationlink = " + mTranslationlink);
-				if (mUrl != null) {
-					String translationPath = mUrl.substring(0, mUrl.lastIndexOf("/") + "/".length());
+                if (mUrl != null) {
+                    String translationPath = mUrl.substring(0, mUrl.lastIndexOf("/") + "/".length());
 
-					mTranslationlink = translationPath + link;
+                    mTranslationlink = translationPath + link;
 
-		            Log.d(TAG, "mTranslationlink = " + mTranslationlink);
-					Document doc = getWebpageDoc(mTranslationlink);
+                    Log.d(TAG, "mTranslationlink = " + mTranslationlink);
+                    Document doc = getWebpageDoc(mTranslationlink);
 
-					getTranslationContent(doc);
-				}
-			}
+                    getTranslationContent(doc);
+                }
+            }
 
-		}).start();
+        }).start();
 
-	}
+    }
 
-	private void getTranslationContent(Document doc) {
-		if (doc == null) {
-			if (mRetry > 0) {
-				mRetry--;
-				getTranslationContent(mTranslationlink);
-			}
-			return;
-		}
-		Element ele = doc.getElementById("content");
-		mTranslation = ele.html();
+    private void getTranslationContent(Document doc) {
+        if (doc == null) {
+            if (mRetry > 0) {
+                mRetry--;
+                getTranslationContent(mTranslationlink);
+            }
+            return;
+        }
+        Element ele = doc.getElementById("content");
+        mTranslation = ele.html();
 
         if (mTranslation != null) {
 
@@ -211,17 +211,17 @@ public class GrepArticleWebPage {
         map.put(mArticleInfo.key, mArticleInfo);
         LocalFileCache.getInstance().setmLocalFileMap(map);
         LocalFileCache.getInstance().wirteFile();
-	}
+    }
 
-	private Document getWebpageDoc(String url) {
-		Document doc = null;
-		try {
-			doc = Jsoup.connect(url).timeout(5000).get();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return doc;
-	}
+    private Document getWebpageDoc(String url) {
+        Document doc = null;
+        try {
+            doc = Jsoup.connect(url).timeout(5000).get();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return doc;
+    }
 
 
     public static String CACHE_PATH = Environment.getExternalStorageDirectory().toString() + "/51voa/cache";
@@ -241,9 +241,9 @@ public class GrepArticleWebPage {
         mArticleInfo.audio = filename;
         mArticleInfo.audioUrl = urlstring;
         filename = CACHE_PATH + "/" + mArticleInfo.key + ".txt";
-        
+
         CacheToFile.writeFile(filename, mAtricle.getBytes());
-        
+
         mArticleInfo.localFileName = filename;
     }
 
@@ -254,16 +254,16 @@ public class GrepArticleWebPage {
 
     private static final int MAX_BUFFER_SIZE = 1024;
 
-    private void downloadFile (String urlString, String localFilename) {
-        
+    private void downloadFile(String urlString, String localFilename) {
+
         RandomAccessFile file = null;
 
         InputStream stream = null;
-        
+
         try {
             URL url = new URL(urlString);
             // Open connection to URL.
-            HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
             // Specify what portion of file to download.
             connection.setRequestProperty("Range", "bytes=" + 0 + "-");
@@ -282,11 +282,11 @@ public class GrepArticleWebPage {
                 error(urlString, localFilename);
                 return;
             }
-            
+
             int downloaded = 0;
 
             file = new RandomAccessFile(localFilename, "rw");
-            
+
             long length = file.length();
 
             downloaded = (int) length;
@@ -316,10 +316,10 @@ public class GrepArticleWebPage {
                     break;
                 }
 
-                file.write(buffer, 0, read);   
+                file.write(buffer, 0, read);
                 downloaded = downloaded + read;
                 notifyTheProgress(size, downloaded, urlString);
-            } while (read != -1); 
+            } while (read != -1);
         } catch (IOException e) {
             Log.e(TAG, e.toString());
             error(urlString, localFilename);
@@ -345,7 +345,7 @@ public class GrepArticleWebPage {
 
     private void notifyTheProgress(int total, int downloaded, String urlString) {
         int progress = downloaded * 100 / total;
-        
+
         if (downloaded == total) {
 
             mProgress = 100;
@@ -372,8 +372,8 @@ public class GrepArticleWebPage {
 
     private void error(String urlString, String localFilename) {
         if (mRetryDownloadfile != 0) {
-            mRetryDownloadfile --;
-            downloadFile (urlString, localFilename);
+            mRetryDownloadfile--;
+            downloadFile(urlString, localFilename);
         }
     }
 

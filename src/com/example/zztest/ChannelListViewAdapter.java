@@ -23,7 +23,7 @@ public class ChannelListViewAdapter extends BaseAdapter {
 
     protected static final String TAG = "ChannelListViewAdapter";
 
-    public ChannelListViewAdapter (Context context, ArrayList<ArticleFile> listItem) {
+    public ChannelListViewAdapter(Context context, ArrayList<ArticleFile> listItem) {
         mListItem = listItem;
         mContext = context;
         mInflater = LayoutInflater.from(context);
@@ -32,7 +32,7 @@ public class ChannelListViewAdapter extends BaseAdapter {
     @Override
     public int getCount() {
         if (mListItem != null) {
-            return mListItem.size();            
+            return mListItem.size();
         }
         return 0;
     }
@@ -41,7 +41,7 @@ public class ChannelListViewAdapter extends BaseAdapter {
     public Object getItem(int arg0) {
 
         if (mListItem != null) {
-            return mListItem.get(arg0);            
+            return mListItem.get(arg0);
         }
 
         return null;
@@ -69,7 +69,7 @@ public class ChannelListViewAdapter extends BaseAdapter {
             holder.download_text = (TextView) convertView.findViewById(R.id.download_text);
             convertView.setTag(holder);
         } else {
-            holder = (ViewHolder)convertView.getTag();
+            holder = (ViewHolder) convertView.getTag();
         }
 
         Log.d(TAG, "index = " + position);
@@ -79,7 +79,7 @@ public class ChannelListViewAdapter extends BaseAdapter {
         if (mListItem.get(position).subChannel != null) {
             holder.subChannle.setVisibility(View.VISIBLE);
             holder.subChannle.setText(mListItem.get(position).subChannel);
-        }else {
+        } else {
             holder.subChannle.setVisibility(View.INVISIBLE);
         }
 
@@ -94,7 +94,7 @@ public class ChannelListViewAdapter extends BaseAdapter {
         } else {
             holder.zimu.setVisibility(View.INVISIBLE);
         }
-        
+
         if (mListItem.get(position).localFileName != null) {
             holder.download_text.setVisibility(View.VISIBLE);
         } else {
@@ -104,12 +104,12 @@ public class ChannelListViewAdapter extends BaseAdapter {
         return convertView;
     }
 
-    public final class ViewHolder{
+    public final class ViewHolder {
         public TextView title;
         public TextView subChannle;
         public TextView fanyi;
         public TextView zimu;
         public TextView download_text;
-        
+
     }
 }

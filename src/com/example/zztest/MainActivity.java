@@ -28,7 +28,7 @@ public class MainActivity extends Activity {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
             Log.d(TAG, "你点击了第" + position + "行");
-            
+
             if (position == 4) {
                 Intent intent = new Intent(MainActivity.this, ArticleActivity.class);
                 intent.putExtra("channelindex", position);
@@ -47,7 +47,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initListView();
-        
+
         LocalFileCache.getInstance();
     }
 
@@ -81,7 +81,8 @@ public class MainActivity extends Activity {
         map.put("ItemText", "本地文档");
         listItem.add(map);
 
-        SimpleAdapter mSimpleAdapter = new SimpleAdapter(this, listItem, R.layout.home_list_item, new String[] {"ItemImage", "ItemText"},
+        SimpleAdapter mSimpleAdapter =
+                new SimpleAdapter(this, listItem, R.layout.home_list_item, new String[] {"ItemImage", "ItemText"},
                         new int[] {R.id.img_item, R.id.text_item});
 
         mListView.setAdapter(mSimpleAdapter);

@@ -40,7 +40,7 @@ public class Download extends Observable implements Runnable {
     // Constructor for Download.
     public Download(URL url, String key) {
         this.url = url;
-        this.key = key; 
+        this.key = key;
         size = -1;
         downloaded = 0;
         status = IDLE;
@@ -55,19 +55,19 @@ public class Download extends Observable implements Runnable {
         String lengthstr = CacheToFile.readFile(cachefilename);
 
         if (lengthstr != null && !lengthstr.isEmpty()) {
-        	try {
+            try {
                 downloaded = Integer.parseInt(lengthstr);
-        	} catch (NumberFormatException e) {
-        		downloaded = 0;
-        	}
+            } catch (NumberFormatException e) {
+                downloaded = 0;
+            }
         }
     }
 
-	private synchronized void wirteDownloadedInfo(String length) {
+    private synchronized void wirteDownloadedInfo(String length) {
 
         String cachefilename = cachefileInfo + getFileName() + ".tmp";
 
-        Log.d(TAG , "wirte to file, length = " + length);
+        Log.d(TAG, "wirte to file, length = " + length);
         CacheToFile.writeFile(cachefilename, length.getBytes());
     }
 
@@ -195,9 +195,10 @@ public class Download extends Observable implements Runnable {
                 downloaded = 0;
             }
 
-            Log.d(TAG, "download() localFilename = " + localFilename + ", downloaded = " + downloaded + ", size = " + size);
+            Log.d(TAG, "download() localFilename = " + localFilename + ", downloaded = " + downloaded + ", size = "
+                    + size);
             // Open file and seek to the end of it.
-            file = new RandomAccessFile( localFilename, "rw");
+            file = new RandomAccessFile(localFilename, "rw");
             file.seek(downloaded);
 
             stream = connection.getInputStream();
@@ -215,7 +216,7 @@ public class Download extends Observable implements Runnable {
                 // Read from server into buffer.
                 int read = stream.read(buffer);
                 if (read == -1) {
-                	Log.d(TAG, "read length is -1");
+                    Log.d(TAG, "read length is -1");
                     break;
                 }
 

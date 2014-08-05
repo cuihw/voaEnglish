@@ -47,7 +47,7 @@ public class ArticleActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.article_main);
 
-        mWebView = (WebView)findViewById(R.id.webView1);
+        mWebView = (WebView) findViewById(R.id.webView1);
         // mWebView.loadData(testHtml, "text/html", "UTF-8");
 
         Intent intent = getIntent();
@@ -56,16 +56,12 @@ public class ArticleActivity extends Activity {
 
 
         HashMap<String, ArticleFile> map = LocalFileCache.getInstance().getLocalFileMap();
-        ArticleFile af= map.get(articleKey);
+        ArticleFile af = map.get(articleKey);
         if (af != null) {
             String content = CacheToFile.readFile(af.localFileName);
             if (content != null) {
                 mWebView.loadData(content, "text/html", "UTF-8");
             }
         }
-        
     }
-
-    
-    
 }

@@ -177,7 +177,7 @@ public class ChannelListViewActivity extends Activity {
     };
 
 
-	private Handler mHandler = new Handler() {
+    private Handler mHandler = new Handler() {
 
         @Override
         public void handleMessage(Message msg) {
@@ -194,11 +194,11 @@ public class ChannelListViewActivity extends Activity {
                     break;
 
                 case Constant.UPDATE_TEXT:
-//                    Object obj = msg.obj;
-//                    if (obj instanceof GrepArticleWebPage) {
-//                        GrepArticleWebPage gawp = (GrepArticleWebPage)obj;
-//                        downloadAudioAndExtra(gawp);
-//                    }
+                    // Object obj = msg.obj;
+                    // if (obj instanceof GrepArticleWebPage) {
+                    // GrepArticleWebPage gawp = (GrepArticleWebPage)obj;
+                    // downloadAudioAndExtra(gawp);
+                    // }
 
                     break;
                 case Constant.DOWNLOAD_PROGRESS:
@@ -218,57 +218,6 @@ public class ChannelListViewActivity extends Activity {
         pd = ProgressDialog.show(ChannelListViewActivity.this, null, "Loading....    加载中，请稍后……");
     }
 
-//    protected void saveLocalFileInfo(final Download dl) {
-//
-//        Log.d(TAG, "saveLocalFileInfo " + dl.getLocalFilename());
-//
-//        String url = dl.getUrl();
-//
-//        GrepArticleWebPage grepArticleWebPage = grepArticleWebPageMap.get(url);
-//
-//        if (grepArticleWebPage != null) {
-//
-//            String urlstring = grepArticleWebPage.getUrl();
-//            
-//            String articleKey = ArticleFile.getArticleFileByUrl(urlstring);
-//            
-//            ArticleFile af = LocalFileCache.getInstance().getLocalFileMap().get(articleKey);
-//            if (af == null) {
-//                af = new ArticleFile();
-//                af.key = articleKey;
-//            }
-//
-//            if (url.endsWith("lrc")) {
-//                af.lrc = dl.getLocalFilename();
-//                af.lrcUrl = grepArticleWebPage.getLrcUrl();
-//            } else if (url.endsWith("mp3")) {
-//                af.audio = dl.getLocalFilename();
-//                af.audioUrl = grepArticleWebPage.getMp3webUrl();
-//            }
-//
-//            if (af.localFileName == null) {
-//                String article = grepArticleWebPage.getAtricle();
-//                if (article != null) {
-//                    String filename = Download.SDPATH + "/" + articleKey + ".txt";
-//                    CacheToFile.writeFile(filename, article.getBytes());
-//                    af.localFileName = filename;
-//                }
-//
-//                String articleTrans = grepArticleWebPage.getTranstion();
-//                if (articleTrans != null) {
-//                    String filename = Download.SDPATH + "/" + articleKey + "_1.txt";
-//                    CacheToFile.writeFile(filename, articleTrans.getBytes());
-//                    af.translation = filename;
-//                }
-//            }
-//
-//            Log.d(TAG, "LocalFileCache.getInstance().wirteFile() " + af.key);
-//            HashMap<String, ArticleFile>  map = LocalFileCache.getInstance().getLocalFileMap();
-//            map.put(af.key, af);
-//            LocalFileCache.getInstance().wirteFile();
-//        }
-//    }
-
     protected void getArticlefromWeb(int position) {
         ArticleFile af = mListItem.get(position);
 
@@ -281,30 +230,8 @@ public class ChannelListViewActivity extends Activity {
             GrepArticleWebPage grepArticleWebPage = new GrepArticleWebPage(mHandler, position, af);
             grepArticleWebPageMap.put(af.key, grepArticleWebPage);
         }
-        
+
 
     }
-
-//    protected void downloadAudioAndExtra(GrepArticleWebPage gawp) {
-//        // TODO Auto-generated method stub
-//
-//        Log.d(TAG, "downloadAudioAndExtra ");
-//
-//        DownloadTask downloadTask = DownloadTask.getInstence();
-//        downloadTask.setHandler(mHandler);
-//        String urlstring = gawp.getLrcUrl();
-//
-//        if (urlstring != null) {
-//            grepArticleWebPageMap.put(urlstring, gawp);
-//            downloadTask.addTask(urlstring, gawp.mArticleInfo.key);
-//        }
-//        
-//        String mp3string = gawp.getMp3webUrl();
-//
-//        if (mp3string!= null) {
-//            grepArticleWebPageMap.put(mp3string, gawp);
-//            downloadTask.addTask(mp3string, gawp.mArticleInfo.key);
-//        }
-//    }
 
 }

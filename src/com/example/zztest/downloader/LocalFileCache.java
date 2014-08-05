@@ -28,7 +28,7 @@ public class LocalFileCache {
     private final String LocalFileCacheFile = "/data/data/com.example.zztest/LocalFileList.xml";
 
     private HashMap<String, ArticleFile> mLocalFileMap = new HashMap<String, ArticleFile>();
-    
+
     private static LocalFileCache intences = null;
 
     public static synchronized LocalFileCache getInstance() {
@@ -64,7 +64,7 @@ public class LocalFileCache {
         writeThread.start();
         return mLocalFile;
     }
-    
+
     public void wirteFile() {
         wirteFileCacheList(mLocalFileMap);
     }

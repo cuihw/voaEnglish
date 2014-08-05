@@ -11,9 +11,9 @@ public class WebPageLink {
 
     @Override
     public boolean equals(Object o) {
-        if ( o instanceof WebPageLink) {
-            WebPageLink other = (WebPageLink)o;
-            return other.link.equals(this.link); 
+        if (o instanceof WebPageLink) {
+            WebPageLink other = (WebPageLink) o;
+            return other.link.equals(this.link);
         }
 
         return false;

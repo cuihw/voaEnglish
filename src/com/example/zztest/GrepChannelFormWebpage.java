@@ -103,20 +103,21 @@ public class GrepChannelFormWebpage {
     }
 
     /*
-     * <li><a href="/Agriculture_Report_1.html" target="_blank"><font color=#E43026>[ Agriculture Report ]</font></a> 
-     * <a href="/lrc/201407/se-ag-thailand-21jul14.lrc" target=_blank>
-     * <img src="/images/lrc.gif" width="27" height="15" border="0"></a>
-     * <a href="/VOA_Special_English/thailand-ends-controversial-rice-support-program-57742_1.html" target="_blank">
-     * <img src="/images/yi.gif" width="27" height="15" border="0"></a>
-     * <a href="/VOA_Special_English/thailand-ends-controversial-rice-support-program-57742.html" target="_blank">
-     * Thailand Ends Controversial Rice Support Program (2014-7-22)</a> </li>
+     * <li><a href="/Agriculture_Report_1.html" target="_blank"><font color=#E43026>[ Agriculture
+     * Report ]</font></a> <a href="/lrc/201407/se-ag-thailand-21jul14.lrc" target=_blank> <img
+     * src="/images/lrc.gif" width="27" height="15" border="0"></a> <a
+     * href="/VOA_Special_English/thailand-ends-controversial-rice-support-program-57742_1.html"
+     * target="_blank"> <img src="/images/yi.gif" width="27" height="15" border="0"></a> <a
+     * href="/VOA_Special_English/thailand-ends-controversial-rice-support-program-57742.html"
+     * target="_blank"> Thailand Ends Controversial Rice Support Program (2014-7-22)</a> </li>
      */
 
     /*
-    <li>  
-    <a href="/VOA_Standard_English/airbus-adds-metal-three-d-printed-parts-to-new-jets-57875.html" target="_blank">
-    Airbus Adds Metal 3-D-Printed Parts to New Jets  (2014-7-25)</a></li>*/
-    
+     * <li> <a
+     * href="/VOA_Standard_English/airbus-adds-metal-three-d-printed-parts-to-new-jets-57875.html"
+     * target="_blank"> Airbus Adds Metal 3-D-Printed Parts to New Jets (2014-7-25)</a></li>
+     */
+
     private void parserItems(Elements items) {
 
         if (items.size() > 0) {
@@ -130,7 +131,7 @@ public class GrepChannelFormWebpage {
             Elements links = item.getElementsByTag("a");
             int count = links.size();
 
-            ArticleFile af= new ArticleFile();
+            ArticleFile af = new ArticleFile();
 
             for (int i = 0; i < count; i++) {
 
@@ -154,7 +155,7 @@ public class GrepChannelFormWebpage {
                             af.title = text;
                             af.urlstring = linkHref;
                             af.key = ArticleFile.getArticleFileByUrl(linkHref);
-                            
+
                             if (ArticleIsExistInLocal(af.key)) {
                                 af = getArticleFromLocal(af.key);
                             }
@@ -191,15 +192,15 @@ public class GrepChannelFormWebpage {
 
     private ArticleFile getArticleFromLocal(String key) {
         LocalFileCache lfc = LocalFileCache.getInstance();
-        HashMap<String, ArticleFile> mLocalFileMap  = lfc.getLocalFileMap();
-        ArticleFile af =  mLocalFileMap.get(key);
+        HashMap<String, ArticleFile> mLocalFileMap = lfc.getLocalFileMap();
+        ArticleFile af = mLocalFileMap.get(key);
 
         return af;
     }
 
     private boolean ArticleIsExistInLocal(String key) {
         LocalFileCache lfc = LocalFileCache.getInstance();
-        HashMap<String, ArticleFile> mLocalFileMap  = lfc.getLocalFileMap();
+        HashMap<String, ArticleFile> mLocalFileMap = lfc.getLocalFileMap();
         if (mLocalFileMap != null) {
             return mLocalFileMap.containsKey(key);
         }
