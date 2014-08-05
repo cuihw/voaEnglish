@@ -3,6 +3,8 @@ package com.example.zztest;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.example.zztest.downloader.ArticleFile;
+
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,13 +15,15 @@ import android.widget.TextView;
 
 public class ChannelListViewAdapter extends BaseAdapter {
 
-    ArrayList<HashMap<String, Object>> mListItem;
+    ArrayList<ArticleFile> mListItem;
+
     Context mContext;
+
     private LayoutInflater mInflater;
 
     protected static final String TAG = "ChannelListViewAdapter";
 
-    public ChannelListViewAdapter (Context context, ArrayList<HashMap<String, Object>> listItem) {
+    public ChannelListViewAdapter (Context context, ArrayList<ArticleFile> listItem) {
         mListItem = listItem;
         mContext = context;
         mInflater = LayoutInflater.from(context);
@@ -67,40 +71,32 @@ public class ChannelListViewAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder)convertView.getTag();
         }
-        
+
         Log.d(TAG, "index = " + position);
-        
-        if (mListItem.get(position).get(Constant.title) == null) {
 
-            Log.d(TAG, "index = " + position);
-        }
+        holder.title.setText(mListItem.get(position).title);
 
-        holder.title.setText(mListItem.get(position).get(Constant.title).toString());
-
-        if (mListItem.get(position).get(Constant.subChannle) != null) {
+        if (mListItem.get(position).subChannel != null) {
             holder.subChannle.setVisibility(View.VISIBLE);
-            holder.subChannle.setText(mListItem.get(position).get(Constant.subChannle).toString());
+            holder.subChannle.setText(mListItem.get(position).subChannel);
         }else {
             holder.subChannle.setVisibility(View.INVISIBLE);
         }
 
-        if (mListItem.get(position).get("fanyi") != null) {
+        if (mListItem.get(position).translationUrl != null) {
             holder.fanyi.setVisibility(View.VISIBLE);
-            holder.fanyi.setText(mListItem.get(position).get("fanyi").toString());
         } else {
             holder.fanyi.setVisibility(View.INVISIBLE);
         }
 
-        if (mListItem.get(position).get("zimu") != null) {
+        if (mListItem.get(position).lrcUrl != null) {
             holder.zimu.setVisibility(View.VISIBLE);
-            holder.zimu.setText(mListItem.get(position).get("zimu").toString());
         } else {
             holder.zimu.setVisibility(View.INVISIBLE);
         }
         
-        if (mListItem.get(position).get(Constant.already_downloaded) != null) {
+        if (mListItem.get(position).localFileName != null) {
             holder.download_text.setVisibility(View.VISIBLE);
-            holder.zimu.setText(mListItem.get(position).get(Constant.already_downloaded).toString());
         } else {
             holder.download_text.setVisibility(View.INVISIBLE);
         }

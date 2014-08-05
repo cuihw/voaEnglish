@@ -1,6 +1,13 @@
 package com.example.zztest;
 
+import java.util.HashMap;
+
+import com.example.zztest.downloader.ArticleFile;
+import com.example.zztest.downloader.CacheToFile;
+import com.example.zztest.downloader.LocalFileCache;
+
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.webkit.WebView;
 import android.widget.LinearLayout;
@@ -41,8 +48,22 @@ public class ArticleActivity extends Activity {
         setContentView(R.layout.article_main);
 
         mWebView = (WebView)findViewById(R.id.webView1);
-        mWebView.loadData(testHtml, "text/html", "UTF-8");
+        // mWebView.loadData(testHtml, "text/html", "UTF-8");
 
+        Intent intent = getIntent();
+
+        String articleKey = intent.getStringExtra("article_key");
+
+
+        HashMap<String, ArticleFile> map = LocalFileCache.getInstance().getLocalFileMap();
+        ArticleFile af= map.get(articleKey);
+        if (af != null) {
+            String content = CacheToFile.readFile(af.localFileName);
+            if (content != null) {
+                mWebView.loadData(content, "text/html", "UTF-8");
+            }
+        }
+        
     }
 
     

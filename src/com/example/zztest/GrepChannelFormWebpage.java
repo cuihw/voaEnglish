@@ -16,13 +16,13 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
-public class GrepWebpage {
+public class GrepChannelFormWebpage {
 
-    private static final String TAG = "GrepWebpage";
+    private static final String TAG = "GrepChannelFormWebpage";
 
     private int mRetry = 5;
 
-    private ArrayList<HashMap<String, Object>> mListItem;
+    private ArrayList<ArticleFile> mListArticleFile;
 
     private Handler mHandler;
 
@@ -34,13 +34,11 @@ public class GrepWebpage {
 
     private Element mBody;
 
-    private Element mTitle;
-    
-    private String mArticleKey;
+    private Element mChannelTitle;
 
-    public String getTitle() {
-        if (mTitle != null) {
-            return mTitle.text();
+    public String getChannelTitle() {
+        if (mChannelTitle != null) {
+            return mChannelTitle.text();
         }
         return null;
     }
@@ -49,12 +47,12 @@ public class GrepWebpage {
 
     private Elements items;
 
-    public GrepWebpage(Handler handler) {
+    public GrepChannelFormWebpage(Handler handler) {
         mHandler = handler;
     }
 
-    public ArrayList<HashMap<String, Object>> getListItem() {
-        return mListItem;
+    public ArrayList<ArticleFile> getListArticleFile() {
+        return mListArticleFile;
     }
 
     public void getListItemFromWebPage(WebPageLink wpl) {
@@ -94,7 +92,7 @@ public class GrepWebpage {
         mBody = elements.first();
         mRightNav = mBody.getElementById("right_box");
 
-        mTitle = mRightNav.getElementById("title");
+        mChannelTitle = mRightNav.getElementById("title");
 
         mList = mRightNav.getElementById("list");
         Elements uls = mList.getElementsByTag("ul");
@@ -122,9 +120,9 @@ public class GrepWebpage {
     private void parserItems(Elements items) {
 
         if (items.size() > 0) {
-            mListItem = new ArrayList<HashMap<String, Object>>();
+            mListArticleFile = new ArrayList<ArticleFile>();
         } else {
-            mListItem = null;
+            mListArticleFile = null;
         }
 
         for (Element item : items) {
@@ -132,38 +130,33 @@ public class GrepWebpage {
             Elements links = item.getElementsByTag("a");
             int count = links.size();
 
-            HashMap<String, Object> map;
-            map = new HashMap<String, Object>();
+            ArticleFile af= new ArticleFile();
 
             for (int i = 0; i < count; i++) {
+
                 Element link = links.get(i);
 
                 String linkHref = link.attr("href");
 
+                if (!linkHref.startsWith(Constant.VOA_ROOT.link)) {
+                    linkHref = Constant.VOA_ROOT.link + linkHref;
+                }
+
                 String text = null;
-                ArticleFile af = new ArticleFile();
+
                 if (link.hasText()) {
                     text = link.text().trim();
                     if (text.startsWith("[") && text.endsWith("]")) {
                         Log.d(TAG, "subChannle: " + text);
-                        map.put(Constant.subChannle, text);
                         af.subChannel = text;
                     } else {
                         if (i == count - 1) {
-                            map.put(Constant.title, text);
-                            map.put(Constant.titlelink, linkHref);
                             af.title = text;
                             af.urlstring = linkHref;
                             af.key = ArticleFile.getArticleFileByUrl(linkHref);
                             
                             if (ArticleIsExistInLocal(af.key)) {
                                 af = getArticleFromLocal(af.key);
-                            } else {
-                                putArticleToLocal(af);
-                            }
-
-                            if (af.localFileName != null) {
-                                map.put(Constant.already_downloaded, "[已下载]");
                             }
 
                             Log.d(TAG, "title: " + text + ", linkhref = " + linkHref);
@@ -178,46 +171,29 @@ public class GrepWebpage {
                         String mediaSrc = media.attr("src");
 
                         if (mediaSrc.endsWith("lrc.gif")) {
-                            map.put(Constant.zimu, "[字幕]");
-                            map.put(Constant.zimulink, linkHref);
-                            Log.d(TAG, "items: zimu");
+                            af.lrcUrl = linkHref;
                         }
                         if (mediaSrc.endsWith("yi.gif")) {
-                            map.put(Constant.fanyi, "[翻译]");
-                            map.put(Constant.fanyilink, linkHref);
+                            af.translationUrl = linkHref;
                             Log.d(TAG, "items: fanyi");
                         }
                     }
-
                 }
 
                 Log.d(TAG, "items: linkHref = " + linkHref);
             }
 
-            LocalFileCache lfc = LocalFileCache.getInstance();
-            lfc.wirteFile();
-            mListItem.add(map);
+            mListArticleFile.add(af);
         }
 
         notifyUpdateData();
-    }
-
-    private void putArticleToLocal(ArticleFile af) {
-
-        LocalFileCache lfc = LocalFileCache.getInstance();
-        HashMap<String, ArticleFile> mLocalFileMap  = lfc.getLocalFileMap();
-        if (mLocalFileMap == null) {
-            mLocalFileMap = new HashMap<String, ArticleFile> ();
-        }
-        mLocalFileMap.put(af.key, af);
-        lfc.setmLocalFileMap(mLocalFileMap);
     }
 
     private ArticleFile getArticleFromLocal(String key) {
         LocalFileCache lfc = LocalFileCache.getInstance();
         HashMap<String, ArticleFile> mLocalFileMap  = lfc.getLocalFileMap();
         ArticleFile af =  mLocalFileMap.get(key);
-        
+
         return af;
     }
 
@@ -225,7 +201,7 @@ public class GrepWebpage {
         LocalFileCache lfc = LocalFileCache.getInstance();
         HashMap<String, ArticleFile> mLocalFileMap  = lfc.getLocalFileMap();
         if (mLocalFileMap != null) {
-            return mLocalFileMap.containsKey(key);            
+            return mLocalFileMap.containsKey(key);
         }
         return false;
     }

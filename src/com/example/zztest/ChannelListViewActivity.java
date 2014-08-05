@@ -25,19 +25,19 @@ import com.example.zztest.downloader.LocalFileCache;
 public class ChannelListViewActivity extends Activity {
     private int mChannleIndex = 0;
 
-    private static GrepWebpage mGrepWebpageStandard_update;
+    private static GrepChannelFormWebpage mGrepWebpageStandard_update;
 
-    private static GrepWebpage mGrepWebpageSpecial_update;
+    private static GrepChannelFormWebpage mGrepWebpageSpecial_update;
 
-    private static GrepWebpage mGrepWebpageLearning_update;
+    private static GrepChannelFormWebpage mGrepWebpageLearning_update;
 
-    private static GrepWebpage mGrepWebpage;
+    private static GrepChannelFormWebpage mGrepWebpage;
 
     private ListView mListView;
 
     ChannelListViewAdapter mChannelListViewAdapter;
 
-    ArrayList<HashMap<String, Object>> mListItem;
+    ArrayList<ArticleFile> mListItem;
 
     private static final String TAG = "ChannelListViewActivity";
 
@@ -85,14 +85,14 @@ public class ChannelListViewActivity extends Activity {
     private void getLearningUpdate() {
 
         if (mGrepWebpageLearning_update == null) {
-            mGrepWebpageLearning_update = new GrepWebpage(mHandler);
+            mGrepWebpageLearning_update = new GrepChannelFormWebpage(mHandler);
         }
 
-        if (mGrepWebpageLearning_update.getTitle() != null) {
-            ChannelListViewActivity.this.setTitle(mGrepWebpageLearning_update.getTitle());
+        if (mGrepWebpageLearning_update.getChannelTitle() != null) {
+            ChannelListViewActivity.this.setTitle(mGrepWebpageLearning_update.getChannelTitle());
         }
 
-        mListItem = mGrepWebpageLearning_update.getListItem();
+        mListItem = mGrepWebpageLearning_update.getListArticleFile();
         if (mListItem != null) {
 
             mChannelListViewAdapter = new ChannelListViewAdapter(ChannelListViewActivity.this, mListItem);
@@ -108,12 +108,12 @@ public class ChannelListViewActivity extends Activity {
     private void getSpecialUpdate() {
 
         if (mGrepWebpageSpecial_update == null) {
-            mGrepWebpageSpecial_update = new GrepWebpage(mHandler);
+            mGrepWebpageSpecial_update = new GrepChannelFormWebpage(mHandler);
         }
-        mListItem = mGrepWebpageSpecial_update.getListItem();
+        mListItem = mGrepWebpageSpecial_update.getListArticleFile();
 
-        if (mGrepWebpageSpecial_update.getTitle() != null) {
-            ChannelListViewActivity.this.setTitle(mGrepWebpageSpecial_update.getTitle());
+        if (mGrepWebpageSpecial_update.getChannelTitle() != null) {
+            ChannelListViewActivity.this.setTitle(mGrepWebpageSpecial_update.getChannelTitle());
         }
 
         if (mListItem != null) {
@@ -128,14 +128,14 @@ public class ChannelListViewActivity extends Activity {
     private void getStandardUpdate() {
 
         if (mGrepWebpageStandard_update == null) {
-            mGrepWebpageStandard_update = new GrepWebpage(mHandler);
+            mGrepWebpageStandard_update = new GrepChannelFormWebpage(mHandler);
         }
 
-        if (mGrepWebpageStandard_update.getTitle() != null) {
-            ChannelListViewActivity.this.setTitle(mGrepWebpageStandard_update.getTitle());
+        if (mGrepWebpageStandard_update.getChannelTitle() != null) {
+            ChannelListViewActivity.this.setTitle(mGrepWebpageStandard_update.getChannelTitle());
         }
 
-        mListItem = mGrepWebpageStandard_update.getListItem();
+        mListItem = mGrepWebpageStandard_update.getListArticleFile();
         if (mListItem != null) {
             mChannelListViewAdapter = new ChannelListViewAdapter(ChannelListViewActivity.this, mListItem);
             mListView.setAdapter(mChannelListViewAdapter);
@@ -150,14 +150,14 @@ public class ChannelListViewActivity extends Activity {
     private void getEverydayUpdate() {
         WebPageLink wpl = Constant.VOA_ROOT;
         if (mGrepWebpage == null) {
-            mGrepWebpage = new GrepWebpage(mHandler);
+            mGrepWebpage = new GrepChannelFormWebpage(mHandler);
         }
 
-        if (mGrepWebpage.getTitle() != null) {
-            ChannelListViewActivity.this.setTitle(mGrepWebpage.getTitle());
+        if (mGrepWebpage.getChannelTitle() != null) {
+            ChannelListViewActivity.this.setTitle(mGrepWebpage.getChannelTitle());
         }
 
-        mListItem = mGrepWebpage.getListItem();
+        mListItem = mGrepWebpage.getListArticleFile();
         if (mListItem != null) {
             mChannelListViewAdapter = new ChannelListViewAdapter(ChannelListViewActivity.this, mListItem);
             mListView.setAdapter(mChannelListViewAdapter);
@@ -194,31 +194,21 @@ public class ChannelListViewActivity extends Activity {
                     break;
 
                 case Constant.UPDATE_TEXT:
-                    Object obj = msg.obj;
-                    
-                    if (obj instanceof GrepArticleWebPage) {
-                        GrepArticleWebPage gawp = (GrepArticleWebPage)obj;
-
-                        downloadAudioAndExtra(gawp);
-                    }
-                    break;
-                case Constant.DOWNLOAD_MP3_PROGRESS:
+//                    Object obj = msg.obj;
+//                    if (obj instanceof GrepArticleWebPage) {
+//                        GrepArticleWebPage gawp = (GrepArticleWebPage)obj;
+//                        downloadAudioAndExtra(gawp);
+//                    }
 
                     break;
-                case Constant.DOWNLOAD_MP3_COMPLETED:
+                case Constant.DOWNLOAD_PROGRESS:
+
+                    break;
+                case Constant.DOWNLOAD_COMPLETED:
 
                     break;
                 case Constant.DOWNLOAD_UPDATE:
 
-                    Object object = msg.obj;
-                    
-                    if (object instanceof Download) {
-                        Download dl = (Download) object;
-
-                        if (dl.getStatus() == Download.COMPLETE) {
-                            saveLocalFileInfo(dl);
-                        }
-                    }
                     break;
             }
         }
@@ -228,95 +218,93 @@ public class ChannelListViewActivity extends Activity {
         pd = ProgressDialog.show(ChannelListViewActivity.this, null, "Loading....    加载中，请稍后……");
     }
 
-    protected void saveLocalFileInfo(final Download dl) {
-
-        Log.d(TAG, "saveLocalFileInfo " + dl.getLocalFilename());
-
-        String url = dl.getUrl();
-
-        GrepArticleWebPage grepArticleWebPage = grepArticleWebPageMap.get(url);
-
-        if (grepArticleWebPage != null) {
-
-            String urlstring = grepArticleWebPage.getUrl();
-            
-            String articleKey = ArticleFile.getArticleFileByUrl(urlstring);
-            
-            ArticleFile af = LocalFileCache.getInstance().getLocalFileMap().get(articleKey);
-            if (af == null) {
-                af = new ArticleFile();
-                af.key = articleKey;
-            }
-
-            if (url.endsWith("lrc")) {
-                af.lrc = dl.getLocalFilename();
-                af.lrcUrl = grepArticleWebPage.getLrcUrl();
-            } else if (url.endsWith("mp3")) {
-                af.audio = dl.getLocalFilename();
-                af.audioUrl = grepArticleWebPage.getMp3webUrl();
-            }
-
-            if (af.localFileName == null) {
-                String article = grepArticleWebPage.getAtricle();
-                if (article != null) {
-                    String filename = Download.SDPATH + "/" + articleKey + ".txt";
-                    CacheToFile.writeFile(filename, article.getBytes());
-                    af.localFileName = filename;
-                }
-
-                String articleTrans = grepArticleWebPage.getTranstion();
-                if (articleTrans != null) {
-                    String filename = Download.SDPATH + "/" + articleKey + "_1.txt";
-                    CacheToFile.writeFile(filename, articleTrans.getBytes());
-                    af.translation = filename;
-                }
-            }
-
-            Log.d(TAG, "LocalFileCache.getInstance().wirteFile() " + af.key);
-            HashMap<String, ArticleFile>  map = LocalFileCache.getInstance().getLocalFileMap();
-            map.put(af.key, af);
-            LocalFileCache.getInstance().wirteFile();
-        }
-    }
+//    protected void saveLocalFileInfo(final Download dl) {
+//
+//        Log.d(TAG, "saveLocalFileInfo " + dl.getLocalFilename());
+//
+//        String url = dl.getUrl();
+//
+//        GrepArticleWebPage grepArticleWebPage = grepArticleWebPageMap.get(url);
+//
+//        if (grepArticleWebPage != null) {
+//
+//            String urlstring = grepArticleWebPage.getUrl();
+//            
+//            String articleKey = ArticleFile.getArticleFileByUrl(urlstring);
+//            
+//            ArticleFile af = LocalFileCache.getInstance().getLocalFileMap().get(articleKey);
+//            if (af == null) {
+//                af = new ArticleFile();
+//                af.key = articleKey;
+//            }
+//
+//            if (url.endsWith("lrc")) {
+//                af.lrc = dl.getLocalFilename();
+//                af.lrcUrl = grepArticleWebPage.getLrcUrl();
+//            } else if (url.endsWith("mp3")) {
+//                af.audio = dl.getLocalFilename();
+//                af.audioUrl = grepArticleWebPage.getMp3webUrl();
+//            }
+//
+//            if (af.localFileName == null) {
+//                String article = grepArticleWebPage.getAtricle();
+//                if (article != null) {
+//                    String filename = Download.SDPATH + "/" + articleKey + ".txt";
+//                    CacheToFile.writeFile(filename, article.getBytes());
+//                    af.localFileName = filename;
+//                }
+//
+//                String articleTrans = grepArticleWebPage.getTranstion();
+//                if (articleTrans != null) {
+//                    String filename = Download.SDPATH + "/" + articleKey + "_1.txt";
+//                    CacheToFile.writeFile(filename, articleTrans.getBytes());
+//                    af.translation = filename;
+//                }
+//            }
+//
+//            Log.d(TAG, "LocalFileCache.getInstance().wirteFile() " + af.key);
+//            HashMap<String, ArticleFile>  map = LocalFileCache.getInstance().getLocalFileMap();
+//            map.put(af.key, af);
+//            LocalFileCache.getInstance().wirteFile();
+//        }
+//    }
 
     protected void getArticlefromWeb(int position) {
-        HashMap<String, Object> item = mListItem.get(position);
+        ArticleFile af = mListItem.get(position);
 
-        String url = item.get(Constant.titlelink).toString();
+        if (af.localFileName != null) {
+            Intent intent = new Intent(ChannelListViewActivity.this, ArticleActivity.class);
+            intent.putExtra("article_key", af.key);
+            startActivity(intent);
 
-        if (!url.startsWith("Constant.VOA_ROOT.link")) {
-            url = Constant.VOA_ROOT.link + url;
-        }
-
-        Log.d(TAG, "the url of the clicked item is: " + url);
-
-        GrepArticleWebPage grepArticleWebPage = new GrepArticleWebPage(mHandler, position, item);
-
-        grepArticleWebPageMap.put(url, grepArticleWebPage);
-
-        grepArticleWebPage.getArticleInfo(url);
-    }
-
-    protected void downloadAudioAndExtra(GrepArticleWebPage gawp) {
-        // TODO Auto-generated method stub
-
-        Log.d(TAG, "downloadAudioAndExtra ");
-
-        DownloadTask downloadTask = DownloadTask.getInstence();
-        downloadTask.setHandler(mHandler);
-        String urlstring = gawp.getLrcUrl();
-
-        if (urlstring != null) {
-            grepArticleWebPageMap.put(urlstring, gawp);
-            downloadTask.addTask(urlstring);
+        } else {
+            GrepArticleWebPage grepArticleWebPage = new GrepArticleWebPage(mHandler, position, af);
+            grepArticleWebPageMap.put(af.key, grepArticleWebPage);
         }
         
-        String mp3string = gawp.getMp3webUrl();
 
-        if (mp3string!= null) {
-            grepArticleWebPageMap.put(urlstring, gawp);
-            downloadTask.addTask(mp3string);
-        }
     }
+
+//    protected void downloadAudioAndExtra(GrepArticleWebPage gawp) {
+//        // TODO Auto-generated method stub
+//
+//        Log.d(TAG, "downloadAudioAndExtra ");
+//
+//        DownloadTask downloadTask = DownloadTask.getInstence();
+//        downloadTask.setHandler(mHandler);
+//        String urlstring = gawp.getLrcUrl();
+//
+//        if (urlstring != null) {
+//            grepArticleWebPageMap.put(urlstring, gawp);
+//            downloadTask.addTask(urlstring, gawp.mArticleInfo.key);
+//        }
+//        
+//        String mp3string = gawp.getMp3webUrl();
+//
+//        if (mp3string!= null) {
+//            grepArticleWebPageMap.put(mp3string, gawp);
+//            downloadTask.addTask(mp3string, gawp.mArticleInfo.key);
+//        }
+//    }
 
 }

@@ -132,7 +132,6 @@ public class LocalFileCache {
                         localFile.key = pullParser.getAttributeValue(null, "key");
                         localFile.localFileName = pullParser.getAttributeValue(null, "localFileName");
                         localFile.title = pullParser.getAttributeValue(null, "title");
-                        localFile.text = pullParser.getAttributeValue(null, "text");
                         localFile.translation = pullParser.getAttributeValue(null, "translation");
                         localFile.audio = pullParser.getAttributeValue(null, "audio");
                         localFile.audioUrl = pullParser.getAttributeValue(null, "audioUrl");
@@ -190,9 +189,6 @@ public class LocalFileCache {
 
             if (localFile.title != null)
                 serializer.attribute(null, "title", localFile.title);
-
-            if (localFile.text != null)
-                serializer.attribute(null, "text", localFile.text);
 
             if (localFile.translation != null)
                 serializer.attribute(null, "translation", localFile.translation);

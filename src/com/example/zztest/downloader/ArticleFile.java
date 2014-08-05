@@ -9,15 +9,15 @@ public class ArticleFile {
      * */
 
     public String key;
-    public String localFileName;
     public String title;
-    public String text;
+    public String localFileName;
+    public String urlstring;
     public String translation;
+    public String translationUrl;
     public String audio;
     public String audioUrl;
     public String lrc;
     public String lrcUrl;
-    public String urlstring;
     public String subChannel;
 
     @Override

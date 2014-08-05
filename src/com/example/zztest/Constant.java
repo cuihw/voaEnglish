@@ -13,9 +13,9 @@ public class Constant {
 
     public final static int UPDATE_TEXT = 3;
 
-    public final static int DOWNLOAD_MP3_PROGRESS = 4;
+    public final static int DOWNLOAD_PROGRESS = 4;
 
-    public final static int DOWNLOAD_MP3_COMPLETED = 5;
+    public final static int DOWNLOAD_COMPLETED = 5;
 
     public final static int DOWNLOAD_UPDATE = 6;
 

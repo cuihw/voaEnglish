@@ -37,7 +37,7 @@ public class DownloadTask implements Observer {
 
     private HashMap<String, Object> downloadUrlMap = new HashMap<String, Object>();
 
-    ArrayList<HashMap<String, ArticleFile>> localFileList = new ArrayList<HashMap<String, ArticleFile>>();
+    ArrayList<HashMap<String, ArticleFile>> localFileList;
 
     BlockingQueue<Download> mDownloadQueue = new LinkedBlockingQueue<Download>(LIST_SIZE);
 
@@ -91,14 +91,12 @@ public class DownloadTask implements Observer {
         return null;
     }
 
-    public synchronized void addTask(String urlstring) {
+    public synchronized void addTask(String urlstring, String key) {
 
         URL url = checkAndGetUrl(urlstring);
         if (url != null) {
-            Download dl = new Download(url);
-
+            Download dl = new Download(url, key);
             Log.d(TAG, "addTask() mDownloadQueue.size() = " + mDownloadQueue.size());
-
             if (dl != null) {
                 if (!mDownloadQueue.contains(dl)) {
                     try {
@@ -146,6 +144,7 @@ public class DownloadTask implements Observer {
                         mCurrentDownload.addObserver(this);
                         mCurrentDownload.download();
                     }
+
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

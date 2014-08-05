@@ -35,10 +35,12 @@ public class Download extends Observable implements Runnable {
     private int downloaded; // number of bytes downloaded
     private int status; // current status of download
     private String localFilename;
+    private String key;
 
     // Constructor for Download.
-    public Download(URL url) {
+    public Download(URL url, String key) {
         this.url = url;
+        this.key = key; 
         size = -1;
         downloaded = 0;
         status = IDLE;
