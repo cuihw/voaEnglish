@@ -3,6 +3,9 @@ package com.example.zztest;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -17,9 +20,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 import com.example.zztest.downloader.ArticleFile;
-import com.example.zztest.downloader.CacheToFile;
-import com.example.zztest.downloader.Download;
-import com.example.zztest.downloader.DownloadTask;
 import com.example.zztest.downloader.LocalFileCache;
 
 public class ChannelListViewActivity extends Activity {
@@ -77,9 +77,27 @@ public class ChannelListViewActivity extends Activity {
                 getLearningUpdate();
                 break;
             case 4:
+                getLocalUpdate();
                 break;
         }
 
+    }
+
+    private void getLocalUpdate() {
+        HashMap<String, ArticleFile> map = LocalFileCache.getInstance().getLocalFileMap();
+        if (map != null) {
+            Iterator<Entry<String, ArticleFile>> iter = map.entrySet().iterator();
+
+            mListItem = new ArrayList<ArticleFile>();
+            while (iter.hasNext()) {
+                Map.Entry entry = (Map.Entry) iter.next();
+                ArticleFile localFile = (ArticleFile) entry.getValue();
+                mListItem.add(localFile);
+            }
+
+            mChannelListViewAdapter = new ChannelListViewAdapter(ChannelListViewActivity.this, mListItem);
+            mListView.setAdapter(mChannelListViewAdapter);
+        }
     }
 
     private void getLearningUpdate() {
@@ -202,9 +220,15 @@ public class ChannelListViewActivity extends Activity {
 
                     break;
                 case Constant.DOWNLOAD_PROGRESS:
+                    if (mChannelListViewAdapter != null) {
+                        mChannelListViewAdapter.notifyDataSetChanged();
+                    }
 
                     break;
                 case Constant.DOWNLOAD_COMPLETED:
+                    if (mChannelListViewAdapter != null) {
+                        mChannelListViewAdapter.notifyDataSetChanged();
+                    }
 
                     break;
                 case Constant.DOWNLOAD_UPDATE:
@@ -227,8 +251,11 @@ public class ChannelListViewActivity extends Activity {
             startActivity(intent);
 
         } else {
-            GrepArticleWebPage grepArticleWebPage = new GrepArticleWebPage(mHandler, position, af);
-            grepArticleWebPageMap.put(af.key, grepArticleWebPage);
+            GrepArticleWebPage grepArticleWebPage = grepArticleWebPageMap.get(af.key);
+            if (grepArticleWebPage == null) {
+                grepArticleWebPage = new GrepArticleWebPage(mHandler, position, af);
+                grepArticleWebPageMap.put(af.key, grepArticleWebPage);
+            }
         }
 
 

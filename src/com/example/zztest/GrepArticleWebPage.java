@@ -115,6 +115,14 @@ public class GrepArticleWebPage {
         Elements elements = doc.getElementsByTag("body");
         Element mBody = elements.first();
         Element content = mBody.getElementById("content");
+
+        Elements datetimes = content.getElementsByClass("datetime");
+
+        Element mDate = datetimes.first();
+        if (mDate != null) {
+
+        }
+
         mAtricle = content.html();
 
         Element menubar = mBody.getElementById("menubar");
@@ -208,6 +216,9 @@ public class GrepArticleWebPage {
         }
 
         HashMap<String, ArticleFile> map = LocalFileCache.getInstance().getLocalFileMap();
+        if (map == null) {
+            map = new HashMap<String, ArticleFile>();
+        }
         map.put(mArticleInfo.key, mArticleInfo);
         LocalFileCache.getInstance().setmLocalFileMap(map);
         LocalFileCache.getInstance().wirteFile();
@@ -245,6 +256,8 @@ public class GrepArticleWebPage {
         CacheToFile.writeFile(filename, mAtricle.getBytes());
 
         mArticleInfo.localFileName = filename;
+
+        notifyTheProgress(100, 100, urlstring);
     }
 
     private String getFileName(String urlstring) {
@@ -292,8 +305,8 @@ public class GrepArticleWebPage {
             downloaded = (int) length;
 
             file.seek(length);
-            if (length == size + 1 || length == size) {
 
+            if (downloaded >= size) {
                 notifyTheProgress(size, size, urlString);
                 return;
             }
@@ -356,6 +369,8 @@ public class GrepArticleWebPage {
             msg.obj = urlString;
             mHandler.sendMessage(msg);
             Log.d(TAG, "urlString = " + urlString + ", notifyTheProgress = " + mProgress);
+
+            mArticleInfo.progress = "[已下载]";
         }
 
         if (mProgress != progress) {
@@ -367,6 +382,8 @@ public class GrepArticleWebPage {
             msg.obj = urlString;
             mHandler.sendMessage(msg);
             Log.d(TAG, "urlString = " + urlString + ", notifyTheProgress = " + mProgress);
+
+            mArticleInfo.progress = "[下载中" + mProgress + "%]";
         }
     }
 

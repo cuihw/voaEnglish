@@ -9,42 +9,48 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="7dp" >
+        android:padding="3dp" >
 
         <Button
-            android:id="@+id/zimu"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_weight="1"
-            android:background="@drawable/home_select_list_style"
-            android:text="字幕" />
+            android:id="@+id/exit"
+            android:layout_width="50dp"
+            android:layout_height="40dp"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/exit_select"
+            android:onClick="onclickExit" />
 
         <Button
             android:id="@+id/text"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
+            android:layout_width="70dp"
+            android:layout_height="40dp"
             android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_weight="1"
-            android:background="@drawable/home_select_list_style"
-            android:text="文本" />
+            android:layout_marginRight="5dp"
+            android:background="@drawable/button_select"
+            android:text="@string/text" />
 
         <Button
-            android:id="@+id/fanyi"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_weight="1"
-            android:background="@drawable/home_select_list_style"
-            android:text="翻译" />
+            android:id="@+id/translation"
+            android:layout_width="70dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/button_select"
+            android:text="@string/translation" />
+
+        <Button
+            android:id="@+id/zimu"
+            android:layout_width="70dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/button_select"
+            android:text="@string/lrc"
+            android:visibility="invisible" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:layout_weight="1"
         android:orientation="vertical" >
 

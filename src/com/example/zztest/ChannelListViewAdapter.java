@@ -83,7 +83,7 @@ public class ChannelListViewAdapter extends BaseAdapter {
             holder.subChannle.setVisibility(View.INVISIBLE);
         }
 
-        if (mListItem.get(position).translationUrl != null) {
+        if (mListItem.get(position).translation != null ||mListItem.get(position).translationUrl != null) {
             holder.fanyi.setVisibility(View.VISIBLE);
         } else {
             holder.fanyi.setVisibility(View.INVISIBLE);
@@ -98,7 +98,13 @@ public class ChannelListViewAdapter extends BaseAdapter {
         if (mListItem.get(position).localFileName != null) {
             holder.download_text.setVisibility(View.VISIBLE);
         } else {
-            holder.download_text.setVisibility(View.INVISIBLE);
+
+            if (mListItem.get(position).progress != null) {
+                holder.download_text.setVisibility(View.VISIBLE);
+                holder.download_text.setText(mListItem.get(position).progress);
+            } else {
+                holder.download_text.setVisibility(View.INVISIBLE);
+            }
         }
 
         return convertView;

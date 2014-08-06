@@ -29,12 +29,12 @@ public class MainActivity extends Activity {
 
             Log.d(TAG, "你点击了第" + position + "行");
 
-            if (position == 4) {
-                Intent intent = new Intent(MainActivity.this, ArticleActivity.class);
-                intent.putExtra("channelindex", position);
-                startActivity(intent);
-                return;
-            }
+//            if (position == 4) {
+//                Intent intent = new Intent(MainActivity.this, ArticleActivity.class);
+//                intent.putExtra("channelindex", position);
+//                startActivity(intent);
+//                return;
+//            }
 
             Intent intent = new Intent(MainActivity.this, ChannelListViewActivity.class);
             intent.putExtra("channelindex", position);

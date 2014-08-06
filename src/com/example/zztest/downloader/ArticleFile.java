@@ -21,6 +21,7 @@ public class ArticleFile {
     public String lrc;
     public String lrcUrl;
     public String subChannel;
+    public String progress;
 
     @Override
     public boolean equals(Object o) {
@@ -36,5 +37,16 @@ public class ArticleFile {
         afkey = afkey.substring(0, afkey.lastIndexOf("."));
         return afkey;
     }
+
+    @Override
+    public String toString() {
+
+        return "key = " + key + ", title = " + title + ", localFileName = " + localFileName + ", urlstring = "
+                + urlstring + ", translation = " + translation + ", translationUrl = " + translationUrl + ", audio = "
+                + audio + ", audioUrl = " + audioUrl + ", lrc = " + lrc + ", lrcUrl = " + lrcUrl + ", subChannel = "
+                + subChannel;
+
+    }
+
 
 }

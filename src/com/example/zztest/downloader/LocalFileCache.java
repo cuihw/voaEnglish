@@ -140,13 +140,13 @@ public class LocalFileCache {
                         localFile.urlstring = pullParser.getAttributeValue(null, "urlstring");
                         localFile.subChannel = pullParser.getAttributeValue(null, "subChannel");
 
-                        Log.d(TAG, "station from cache is: " + localFile.toString());
+                        Log.d(TAG, "LocalFile from cache is: " + localFile.toString());
                     }
                     break;
 
                 case XmlPullParser.END_TAG:
-                    if ("RadioStation".equals(pullParser.getName())) {
-                        Log.d(TAG, "end RadioStation tag.");
+                    if ("LocalFile".equals(pullParser.getName())) {
+                        Log.d(TAG, "end LocalFile tag.");
                         localFileMap.put(localFile.key, localFile);
                         localFile = null;
                     }
