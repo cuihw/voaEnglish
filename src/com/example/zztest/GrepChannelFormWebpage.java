@@ -81,13 +81,16 @@ public class GrepChannelFormWebpage {
                 mRetry--;
                 Log.d(TAG, "retry to get the data.");
                 getListItemFromWebPage(mWebPageLink);
+
             } else {
-                Message msg = mHandler.obtainMessage();
-                msg.what = Constant.FAILED_UPDATE;
+
+                Message msg = mHandler.obtainMessage(Constant.FAILED_UPDATE);
+
                 mHandler.sendMessage(msg);
             }
             return;
         }
+
         Elements elements = doc.getElementsByTag("body");
         mBody = elements.first();
         mRightNav = mBody.getElementById("right_box");

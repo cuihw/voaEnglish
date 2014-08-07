@@ -1,17 +1,23 @@
 package com.example.zztest;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnInfoListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -21,12 +27,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
 import com.example.zztest.downloader.ArticleFile;
 import com.example.zztest.downloader.CacheToFile;
 import com.example.zztest.downloader.LocalFileCache;
-
 
 public class ArticleActivity extends Activity {
 
@@ -107,6 +113,8 @@ public class ArticleActivity extends Activity {
         mTimePlayedText = (TextView) findViewById(R.id.timeplayed);
 
         mSeekBar = (SeekBar) findViewById(R.id.seekbar);
+        
+        mSeekBar.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
 
         Intent intent = getIntent();
 
@@ -130,8 +138,27 @@ public class ArticleActivity extends Activity {
         }
     }
 
+    public void onclickPlayPause(View view) {
+        if (mp.isPlaying()) {
+            mp.pause();
+            mPlay.setBackgroundResource(R.drawable.play_select);
+        } else {
+            mp.start();
+            mPlay.setBackgroundResource(R.drawable.pause_select);
+        }
+    }
+
     public void onclickText(View view) {
         loadText(false);
+    }
+    
+
+    public void onclickPreviously(View view) {
+        playPreviously();
+    }
+    
+    public void onclickNext(View view) {
+        playNext();
     }
 
     public void onclickTranslation(View view) {
@@ -164,12 +191,35 @@ public class ArticleActivity extends Activity {
         }
 
     }
+    OnSeekBarChangeListener mOnSeekBarChangeListener = new OnSeekBarChangeListener() {
 
+        @Override
+        public void onProgressChanged(SeekBar arg0, int arg1, boolean fromUser) {
+            // TODO Auto-generated method stub
+            Log.d(TAG, "onProgressChanged () arg1 = " + arg1 + ", fromUser = " + fromUser);
+            if (fromUser) {
+                mp.seekTo(arg1);
+            }
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar arg0) {
+            // TODO Auto-generated method stub
+            Log.d(TAG, "onStartTrackingTouch () arg1 = ");
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar arg0) {
+            // TODO Auto-generated method stub
+            Log.d(TAG, "onStopTrackingTouch () arg1 = ");
+        }
+
+    };
+    
     private OnInfoListener mpListener = new OnInfoListener() {
 
         @Override
         public boolean onInfo(MediaPlayer arg0, int arg1, int arg2) {
-
             return false;
         }
     };
@@ -190,6 +240,14 @@ public class ArticleActivity extends Activity {
 
                 int length = mp.getDuration();
 
+                mp.setOnCompletionListener(new OnCompletionListener(){
+                    @Override
+                    public void onCompletion(MediaPlayer arg0) {
+
+                        Log.d(TAG, "onCompletion () ....................................................................");
+                        playNext();
+                    }});
+
                 mTimeTotalText.setText(getTime(length));
 
                 mSeekBar.setMax(length);
@@ -197,6 +255,11 @@ public class ArticleActivity extends Activity {
 
                 Message message = handler.obtainMessage(FRESH_TIME);
                 handler.sendMessage(message);
+                if (mp.isPlaying()) {
+                    mPlay.setBackgroundResource(R.drawable.pause_select);
+                } else {
+                    mPlay.setBackgroundResource(R.drawable.play_select);
+                }
 
             } catch (IllegalArgumentException e) {
 
@@ -227,6 +290,76 @@ public class ArticleActivity extends Activity {
             return mFormatter.format("%d:%02d:%02d", hours, minutes, seconds).toString();
         } else {
             return mFormatter.format("%02d:%02d", minutes, seconds).toString();
+        }
+    }
+
+    static private ArrayList<ArticleFile> getListItem () {
+
+        ArrayList<ArticleFile> listItem  = null;
+
+        HashMap<String, ArticleFile> map = LocalFileCache.getInstance().getLocalFileMap();
+        if (map != null) {
+            Iterator<Entry<String, ArticleFile>> iter = map.entrySet().iterator();
+
+            listItem = new ArrayList<ArticleFile>();
+            while (iter.hasNext()) {
+                Map.Entry entry = (Map.Entry) iter.next();
+                ArticleFile localFile = (ArticleFile) entry.getValue();
+                listItem.add(localFile);
+            }
+        }
+        return listItem;
+    }
+    
+    private void playNext() {
+        ArrayList<ArticleFile> list = getListItem ();
+        int index = list.indexOf(mArticleFile);
+        if (list.size() == index +1) {
+            mArticleFile = list.get(0);
+        } else {
+            mArticleFile = list.get(index + 1);
+        }
+        
+
+        if (mArticleFile != null) {
+
+            loadText(false);
+
+            if (mArticleFile.translation == null) {
+                translationButton.setVisibility(View.INVISIBLE);
+            } else {
+                translationButton.setVisibility(View.VISIBLE);
+            }
+
+            if (mArticleFile.audio != null) {
+                loadAudio();
+            }
+        }
+    }
+
+    private void playPreviously() {
+        ArrayList<ArticleFile> list = getListItem ();
+        int index = list.indexOf(mArticleFile);
+        if (0 == index) {
+            mArticleFile = list.get(list.size() -1);
+        } else {
+            mArticleFile = list.get(index - 1);
+        }
+        
+
+        if (mArticleFile != null) {
+
+            loadText(false);
+
+            if (mArticleFile.translation == null) {
+                translationButton.setVisibility(View.INVISIBLE);
+            } else {
+                translationButton.setVisibility(View.VISIBLE);
+            }
+
+            if (mArticleFile.audio != null) {
+                loadAudio();
+            }
         }
     }
 

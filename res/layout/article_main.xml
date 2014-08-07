@@ -26,6 +26,7 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="5dp"
             android:background="@drawable/button_select"
+            android:onClick="onclickText"
             android:text="@string/text" />
 
         <Button
@@ -35,6 +36,7 @@
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:background="@drawable/button_select"
+            android:onClick="onclickTranslation"
             android:text="@string/translation" />
 
         <Button
@@ -67,7 +69,7 @@
 
         <RelativeLayout
             android:layout_width="0dp"
-            android:layout_height="60dp"
+            android:layout_height="70dp"
             android:layout_weight="1" >
 
             <include layout="@layout/control_layout" />

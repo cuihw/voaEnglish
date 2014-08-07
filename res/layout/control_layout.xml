@@ -12,7 +12,7 @@
     <LinearLayout
         android:id="@+id/play_layout"
         android:layout_width="fill_parent"
-        android:layout_height="30dp"
+        android:layout_height="40dp"
         android:layout_marginBottom="0dp" >
 
         <TextView
@@ -25,7 +25,7 @@
         <ImageView
             android:id="@+id/repeat"
             android:layout_width="60dp"
-            android:layout_height="30dp"
+            android:layout_height="40dp"
             android:layout_marginRight="20dp"
             android:layout_weight="1"
             android:clickable="true"
@@ -34,26 +34,30 @@
         <ImageView
             android:id="@+id/backward"
             android:layout_width="60dp"
-            android:layout_height="30dp"
+            android:layout_height="40dp"
             android:layout_weight="1"
             android:clickable="true"
-            android:src="@drawable/backward_select" />
+            android:onClick="onclickPreviously"
+            android:background="@drawable/backward_select" />
 
         <ImageView
             android:id="@+id/play"
             android:layout_width="60dp"
-            android:layout_height="30dp"
+            android:layout_height="40dp"
             android:layout_weight="1"
             android:clickable="true"
-            android:src="@drawable/play_select" />
+            android:onClick="onclickPlayPause"
+            android:background="@drawable/play_select"
+            />
 
         <ImageView
             android:id="@+id/forward"
             android:layout_width="60dp"
-            android:layout_height="30dp"
+            android:layout_height="40dp"
             android:layout_weight="1"
             android:clickable="true"
-            android:src="@drawable/forward_select" />
+            android:onClick="onclickNext"
+            android:background="@drawable/forward_select" />
 
         <TextView
             android:id="@+id/timetotal"

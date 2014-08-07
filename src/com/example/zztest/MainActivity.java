@@ -29,13 +29,6 @@ public class MainActivity extends Activity {
 
             Log.d(TAG, "你点击了第" + position + "行");
 
-//            if (position == 4) {
-//                Intent intent = new Intent(MainActivity.this, ArticleActivity.class);
-//                intent.putExtra("channelindex", position);
-//                startActivity(intent);
-//                return;
-//            }
-
             Intent intent = new Intent(MainActivity.this, ChannelListViewActivity.class);
             intent.putExtra("channelindex", position);
             startActivity(intent);
@@ -81,8 +74,7 @@ public class MainActivity extends Activity {
         map.put("ItemText", "本地文档");
         listItem.add(map);
 
-        SimpleAdapter mSimpleAdapter =
-                new SimpleAdapter(this, listItem, R.layout.home_list_item, new String[] {"ItemImage", "ItemText"},
+        SimpleAdapter mSimpleAdapter = new SimpleAdapter(this, listItem, R.layout.home_list_item, new String[] {"ItemImage", "ItemText"},
                         new int[] {R.id.img_item, R.id.text_item});
 
         mListView.setAdapter(mSimpleAdapter);

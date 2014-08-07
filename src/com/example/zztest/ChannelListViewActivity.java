@@ -17,6 +17,7 @@ import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
@@ -209,6 +210,9 @@ public class ChannelListViewActivity extends Activity {
                     break;
                 case Constant.FAILED_UPDATE:
                     pd.dismiss();
+                    Toast.makeText(ChannelListViewActivity.this, "网络状况不好，不能更新文章列表！ \r\n跳转到本地文章。", Toast.LENGTH_SHORT).show();
+                    mChannleIndex = 4;
+                    getChannelData();
                     break;
 
                 case Constant.UPDATE_TEXT:
