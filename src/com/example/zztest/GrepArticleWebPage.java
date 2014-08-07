@@ -23,11 +23,11 @@ import android.util.Log;
 
 public class GrepArticleWebPage {
 
+    private static final String TAG = "GrepArticleWebPage";
+
     public int __index;
 
     private Handler mHandler;
-
-    private static final String TAG = "GrepArticleWebPage";
 
     private int mRetry = 5;
 
@@ -45,9 +45,11 @@ public class GrepArticleWebPage {
 
     private String mTranslationlink;
 
-    ArticleFile mArticleInfo;
+    private ArticleFile mArticleInfo;
 
     int mProgress = 0;
+
+    int mOldProgress = 0;
 
     private int mRetryDownloadfile = 5;
 
@@ -65,7 +67,6 @@ public class GrepArticleWebPage {
     public String getAtricle() {
         return mAtricle;
     }
-
 
     public String getUrl() {
         return mUrl;
@@ -116,13 +117,6 @@ public class GrepArticleWebPage {
         Element mBody = elements.first();
         Element content = mBody.getElementById("content");
 
-        Elements datetimes = content.getElementsByClass("datetime");
-
-        Element mDate = datetimes.first();
-        if (mDate != null) {
-
-        }
-
         mAtricle = content.html();
 
         Element menubar = mBody.getElementById("menubar");
@@ -168,6 +162,9 @@ public class GrepArticleWebPage {
         map.put(mArticleInfo.key, mArticleInfo);
         LocalFileCache.getInstance().setmLocalFileMap(map);
         LocalFileCache.getInstance().wirteFile();
+
+        mProgress = 100;
+        notifyTheProgress();
     }
 
 
@@ -257,7 +254,6 @@ public class GrepArticleWebPage {
 
         mArticleInfo.localFileName = filename;
 
-        notifyTheProgress(100, 100, urlstring);
     }
 
     private String getFileName(String urlstring) {
@@ -268,7 +264,7 @@ public class GrepArticleWebPage {
     private static final int MAX_BUFFER_SIZE = 1024;
 
     private void downloadFile(String urlString, String localFilename) {
-
+        mProgress = 0;
         RandomAccessFile file = null;
 
         InputStream stream = null;
@@ -307,13 +303,17 @@ public class GrepArticleWebPage {
             file.seek(length);
 
             if (downloaded >= size) {
-                notifyTheProgress(size, size, urlString);
+                mProgress = 100;
+                notifyTheProgress();
                 return;
             }
 
             stream = connection.getInputStream();
             byte buffer[];
             int read = -1;
+
+            notifyTheProgress();
+
             do {
                 if (size - downloaded > MAX_BUFFER_SIZE) {
                     buffer = new byte[MAX_BUFFER_SIZE];
@@ -325,14 +325,19 @@ public class GrepArticleWebPage {
 
                 if (read == -1 || read == 0) {
                     Log.d(TAG, "read length is -1");
-                    notifyTheProgress(size, downloaded, urlString);
+                    mProgress = 100;
                     break;
                 }
 
                 file.write(buffer, 0, read);
                 downloaded = downloaded + read;
-                notifyTheProgress(size, downloaded, urlString);
+
+                mProgress = downloaded * 100 / size;
+
+                notifyTheProgress();
+
             } while (read != -1);
+
         } catch (IOException e) {
             Log.e(TAG, e.toString());
             error(urlString, localFilename);
@@ -356,34 +361,27 @@ public class GrepArticleWebPage {
         }
     }
 
-    private void notifyTheProgress(int total, int downloaded, String urlString) {
-        int progress = downloaded * 100 / total;
 
-        if (downloaded == total) {
+    private void notifyTheProgress() {
 
-            mProgress = 100;
-
-            Message msg = mHandler.obtainMessage();
-            msg.what = Constant.DOWNLOAD_COMPLETED;
-            msg.arg1 = mProgress;
-            msg.obj = urlString;
+        if (mProgress == 100) {
+            Log.d(TAG, "mArticleInfo = " + mArticleInfo.toString() + ", notifyTheProgress = 100%");
+            Message msg = mHandler.obtainMessage(Constant.DOWNLOAD_COMPLETED);
+            msg.obj = mArticleInfo;
             mHandler.sendMessage(msg);
-            Log.d(TAG, "urlString = " + urlString + ", notifyTheProgress = " + mProgress);
 
             mArticleInfo.progress = "[已下载]";
-        }
+        } else {
 
-        if (mProgress != progress) {
-            mProgress = progress;
+            if (mProgress == 0 || mProgress - mOldProgress > 3) {
+                mOldProgress = mProgress;
+                Message msg = mHandler.obtainMessage(Constant.DOWNLOAD_PROGRESS);
+                msg.obj = mArticleInfo;
+                mHandler.sendMessage(msg);
+                mArticleInfo.progress = "[下载中" + mProgress + "%]";
 
-            Message msg = mHandler.obtainMessage();
-            msg.what = Constant.DOWNLOAD_PROGRESS;
-            msg.arg1 = mProgress;
-            msg.obj = urlString;
-            mHandler.sendMessage(msg);
-            Log.d(TAG, "urlString = " + urlString + ", notifyTheProgress = " + mProgress);
-
-            mArticleInfo.progress = "[下载中" + mProgress + "%]";
+                Log.d(TAG, "mArticleInfo = " + mArticleInfo.toString() + ", notifyTheProgress = " + mProgress);
+            }
         }
     }
 

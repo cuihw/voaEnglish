@@ -131,7 +131,7 @@ public class LocalFileCache {
                         localFile = new ArticleFile();
                         localFile.key = pullParser.getAttributeValue(null, "key");
                         localFile.localFileName = pullParser.getAttributeValue(null, "localFileName");
-                        localFile.title = pullParser.getAttributeValue(null, "title");
+                        localFile.setTitle(pullParser.getAttributeValue(null, "title"));
                         localFile.translation = pullParser.getAttributeValue(null, "translation");
                         localFile.audio = pullParser.getAttributeValue(null, "audio");
                         localFile.audioUrl = pullParser.getAttributeValue(null, "audioUrl");
@@ -139,8 +139,9 @@ public class LocalFileCache {
                         localFile.lrcUrl = pullParser.getAttributeValue(null, "lrcUrl");
                         localFile.urlstring = pullParser.getAttributeValue(null, "urlstring");
                         localFile.subChannel = pullParser.getAttributeValue(null, "subChannel");
-
+                        localFile.progress = "[已下载]";
                         Log.d(TAG, "LocalFile from cache is: " + localFile.toString());
+
                     }
                     break;
 
@@ -187,8 +188,8 @@ public class LocalFileCache {
             if (localFile.localFileName != null)
                 serializer.attribute(null, "localFileName", localFile.localFileName);
 
-            if (localFile.title != null)
-                serializer.attribute(null, "title", localFile.title);
+            if (localFile.getTitle() != null)
+                serializer.attribute(null, "title", localFile.getTitle());
 
             if (localFile.translation != null)
                 serializer.attribute(null, "translation", localFile.translation);

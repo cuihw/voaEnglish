@@ -152,7 +152,7 @@ public class GrepChannelFormWebpage {
                         af.subChannel = text;
                     } else {
                         if (i == count - 1) {
-                            af.title = text;
+                            af.setTitle(text);
                             af.urlstring = linkHref;
                             af.key = ArticleFile.getArticleFileByUrl(linkHref);
 

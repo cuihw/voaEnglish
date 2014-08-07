@@ -71,7 +71,7 @@ public class ArticleActivity extends Activity {
                     }
 
                     Message message = handler.obtainMessage(FRESH_TIME);
-                    handler.sendMessageDelayed(message, 500); // 发送message , 这样消息就能循环发送
+                    handler.sendMessageDelayed(message, 1000);
             }
             super.handleMessage(msg);
         }
@@ -157,7 +157,7 @@ public class ArticleActivity extends Activity {
         }
 
         if (content != null) {
-            content = "<P>" + mArticleFile.title + "</P><P></P>" + content;
+            content = "<P>" + mArticleFile.getTitle() + "</P><P></P>" + content;
 
             mWebView.loadUrl(mArticleFile.localFileName);
             mWebView.loadDataWithBaseURL(null, content, "text/html", "UTF-8", null);

@@ -1,6 +1,7 @@
 package com.example.zztest;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 import com.example.zztest.downloader.ArticleFile;
@@ -25,6 +26,7 @@ public class ChannelListViewAdapter extends BaseAdapter {
 
     public ChannelListViewAdapter(Context context, ArrayList<ArticleFile> listItem) {
         mListItem = listItem;
+        Collections.sort(mListItem);
         mContext = context;
         mInflater = LayoutInflater.from(context);
     }
@@ -74,7 +76,7 @@ public class ChannelListViewAdapter extends BaseAdapter {
 
         Log.d(TAG, "index = " + position);
 
-        holder.title.setText(mListItem.get(position).title);
+        holder.title.setText(mListItem.get(position).getTitle());
 
         if (mListItem.get(position).subChannel != null) {
             holder.subChannle.setVisibility(View.VISIBLE);
@@ -97,6 +99,7 @@ public class ChannelListViewAdapter extends BaseAdapter {
 
         if (mListItem.get(position).localFileName != null) {
             holder.download_text.setVisibility(View.VISIBLE);
+            holder.download_text.setText(mListItem.get(position).progress);
         } else {
 
             if (mListItem.get(position).progress != null) {
@@ -116,6 +119,11 @@ public class ChannelListViewAdapter extends BaseAdapter {
         public TextView fanyi;
         public TextView zimu;
         public TextView download_text;
+    }
 
+    @Override
+    public void notifyDataSetChanged() {
+        Collections.sort(mListItem);
+        super.notifyDataSetChanged();
     }
 }

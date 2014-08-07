@@ -2,6 +2,7 @@ package com.example.zztest;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -94,7 +95,6 @@ public class ChannelListViewActivity extends Activity {
                 ArticleFile localFile = (ArticleFile) entry.getValue();
                 mListItem.add(localFile);
             }
-
             mChannelListViewAdapter = new ChannelListViewAdapter(ChannelListViewActivity.this, mListItem);
             mListView.setAdapter(mChannelListViewAdapter);
         }
@@ -212,25 +212,20 @@ public class ChannelListViewActivity extends Activity {
                     break;
 
                 case Constant.UPDATE_TEXT:
-                    // Object obj = msg.obj;
-                    // if (obj instanceof GrepArticleWebPage) {
-                    // GrepArticleWebPage gawp = (GrepArticleWebPage)obj;
-                    // downloadAudioAndExtra(gawp);
-                    // }
 
                     break;
                 case Constant.DOWNLOAD_PROGRESS:
                     if (mChannelListViewAdapter != null) {
                         mChannelListViewAdapter.notifyDataSetChanged();
                     }
-
                     break;
+
                 case Constant.DOWNLOAD_COMPLETED:
                     if (mChannelListViewAdapter != null) {
                         mChannelListViewAdapter.notifyDataSetChanged();
                     }
-
                     break;
+
                 case Constant.DOWNLOAD_UPDATE:
 
                     break;
