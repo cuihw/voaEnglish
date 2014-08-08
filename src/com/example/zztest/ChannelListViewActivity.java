@@ -85,6 +85,15 @@ public class ChannelListViewActivity extends Activity {
 
     }
 
+    @Override
+    protected void onResume() {
+        // TODO Auto-generated method stub
+        super.onResume();
+        if (mListItem != null) {
+            mChannelListViewAdapter.notifyDataSetChanged();
+        }
+    }
+
     private void getLocalUpdate() {
         HashMap<String, ArticleFile> map = LocalFileCache.getInstance().getLocalFileMap();
         if (map != null) {

@@ -23,6 +23,7 @@ import android.util.Log;
 import android.util.Xml;
 
 public class LocalFileCache {
+    
     private static final String TAG = "LocalFileCache";
 
     private final String LocalFileCacheFile = "/data/data/com.example.zztest/LocalFileList.xml";

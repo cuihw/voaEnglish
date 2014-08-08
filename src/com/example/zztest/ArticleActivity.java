@@ -24,8 +24,6 @@ import android.view.WindowManager;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
@@ -40,13 +38,9 @@ public class ArticleActivity extends Activity {
 
     private static final int FRESH_TIME = 1;
 
-    WebView mWebView;
+    private WebView mWebView;
 
     boolean mModifyFlag = false;
-
-    RelativeLayout mControlRelativeLayout;
-
-    LinearLayout mLinearWebView;
 
     private ImageView mPlay, mBackward, mForward;
 
@@ -204,13 +198,11 @@ public class ArticleActivity extends Activity {
 
         @Override
         public void onStartTrackingTouch(SeekBar arg0) {
-            // TODO Auto-generated method stub
             Log.d(TAG, "onStartTrackingTouch () arg1 = ");
         }
 
         @Override
         public void onStopTrackingTouch(SeekBar arg0) {
-            // TODO Auto-generated method stub
             Log.d(TAG, "onStopTrackingTouch () arg1 = ");
         }
 
@@ -275,6 +267,8 @@ public class ArticleActivity extends Activity {
 
             }
         }
+
+        Constant.PLAYING_ARTICLE_FILE = mArticleFile;
     }
 
     private String getTime(int timeMs) {

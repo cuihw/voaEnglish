@@ -2,9 +2,6 @@ package com.example.zztest;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-
-import com.example.zztest.downloader.ArticleFile;
 
 import android.content.Context;
 import android.util.Log;
@@ -12,7 +9,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.example.zztest.downloader.ArticleFile;
 
 public class ChannelListViewAdapter extends BaseAdapter {
 
@@ -69,6 +69,8 @@ public class ChannelListViewAdapter extends BaseAdapter {
             holder.fanyi = (TextView) convertView.findViewById(R.id.fanyi_text);
             holder.zimu = (TextView) convertView.findViewById(R.id.zimu_text);
             holder.download_text = (TextView) convertView.findViewById(R.id.download_text);
+            holder.img_item = (ImageView) convertView.findViewById(R.id.img_item);
+            
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -109,6 +111,14 @@ public class ChannelListViewAdapter extends BaseAdapter {
                 holder.download_text.setVisibility(View.INVISIBLE);
             }
         }
+        
+        if (mListItem.get(position).equals(Constant.PLAYING_ARTICLE_FILE)) {
+            holder.img_item.setBackgroundResource(R.drawable.play);
+            convertView.setBackgroundResource(R.drawable.btn_default_normal);
+        } else {
+            holder.img_item.setBackgroundResource(R.drawable.channel_icon);
+            convertView.setBackgroundResource(0);
+        }
 
         return convertView;
     }
@@ -119,6 +129,7 @@ public class ChannelListViewAdapter extends BaseAdapter {
         public TextView fanyi;
         public TextView zimu;
         public TextView download_text;
+        public ImageView img_item;
     }
 
     @Override

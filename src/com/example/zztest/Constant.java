@@ -3,7 +3,11 @@ package com.example.zztest;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.zztest.downloader.ArticleFile;
+
 public class Constant {
+    
+    public static ArticleFile PLAYING_ARTICLE_FILE;
 
     public final static String sharedpreferences = "local_article";
 
