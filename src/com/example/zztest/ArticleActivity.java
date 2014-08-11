@@ -25,6 +25,7 @@ import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SeekBar;
+import android.widget.Toast;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
@@ -128,11 +129,18 @@ public class ArticleActivity extends Activity {
 
             if (mArticleFile.audio != null) {
                 loadAudio();
+            } else {
+                Toast.makeText(this, "Sorry, this article has no audio file. \r\n本篇文章没有同步音频！", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
     public void onclickPlayPause(View view) {
+        if (mArticleFile.audio == null) {
+            Toast.makeText(this, "Sorry, this article has no audio file. \r\n本篇文章没有同步音频！", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         if (mp.isPlaying()) {
             mp.pause();
             mPlay.setBackgroundResource(R.drawable.play_select);

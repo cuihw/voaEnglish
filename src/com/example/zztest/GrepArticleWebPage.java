@@ -120,17 +120,20 @@ public class GrepArticleWebPage {
         mAtricle = content.html();
 
         Element menubar = mBody.getElementById("menubar");
-        Elements links = menubar.select("a[href]");
-        for (int i = 0; i < links.size(); i++) {
-            Element ele = links.get(i);
 
-            String linkHref = ele.attr("href");
-            if (ele.id().equalsIgnoreCase("mp3")) {
-                mMp3webUrl = linkHref;
-            } else if (ele.id().equalsIgnoreCase("lrc")) {
-                mLrcUrl = Constant.VOA_ROOT.link + linkHref;
-            } else if (ele.id().equalsIgnoreCase("EnPage")) {
-                mTranslationlink = linkHref;
+        if (menubar != null) {
+            Elements links = menubar.select("a[href]");
+            for (int i = 0; i < links.size(); i++) {
+                Element ele = links.get(i);
+
+                String linkHref = ele.attr("href");
+                if (ele.id().equalsIgnoreCase("mp3")) {
+                    mMp3webUrl = linkHref;
+                } else if (ele.id().equalsIgnoreCase("lrc")) {
+                    mLrcUrl = Constant.VOA_ROOT.link + linkHref;
+                } else if (ele.id().equalsIgnoreCase("EnPage")) {
+                    mTranslationlink = linkHref;
+                }
             }
         }
 

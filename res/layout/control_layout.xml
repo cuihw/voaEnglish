@@ -24,16 +24,17 @@
 
         <ImageView
             android:id="@+id/repeat"
-            android:layout_width="60dp"
+            android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_marginRight="20dp"
+            android:layout_marginRight="10dp"
             android:layout_weight="1"
             android:clickable="true"
+            android:background="@drawable/button_select"
             android:src="@drawable/repeat_all_select" />
 
         <ImageView
             android:id="@+id/backward"
-            android:layout_width="60dp"
+            android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_weight="1"
             android:clickable="true"
@@ -42,7 +43,7 @@
 
         <ImageView
             android:id="@+id/play"
-            android:layout_width="60dp"
+            android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_weight="1"
             android:clickable="true"
@@ -52,9 +53,10 @@
 
         <ImageView
             android:id="@+id/forward"
-            android:layout_width="60dp"
+            android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_weight="1"
+            android:layout_marginRight="20dp"
             android:clickable="true"
             android:onClick="onclickNext"
             android:background="@drawable/forward_select" />
