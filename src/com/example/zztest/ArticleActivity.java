@@ -46,11 +46,9 @@ public class ArticleActivity extends Activity {
 
     private Button mLrcButton, textButton, translationButton;
 
-    static private MediaPlayer mp = new MediaPlayer();
+    public static MediaPlayer mp;
 
     private ArticleFile mArticleFile;
-
-    private static ArticleFile mPlayingArticleFile;
 
     private TextView mTimeTotalText;
 
@@ -64,10 +62,12 @@ public class ArticleActivity extends Activity {
             switch (msg.what) {
                 case FRESH_TIME:
 
-                    if (mp.isPlaying()) {
+                    if (mp != null && mp.isPlaying()) {
                         int played = mp.getCurrentPosition();
                         mSeekBar.setProgress(played);
                         mTimePlayedText.setText(getTime(played));
+                    } else {
+                        return;
                     }
 
                     Message message = handler.obtainMessage(FRESH_TIME);
@@ -178,7 +178,7 @@ public class ArticleActivity extends Activity {
         }
 
         if (content != null) {
-            content = "<P>" + mArticleFile.getTitle() + "</P><P></P>" + content;
+            content = "<P>" + mArticleFile.title + "</P><P></P>" + content;
 
             mWebView.loadUrl(mArticleFile.localFileName);
             mWebView.loadDataWithBaseURL(null, content, "text/html", "UTF-8", null);
@@ -189,7 +189,6 @@ public class ArticleActivity extends Activity {
 
         @Override
         public void onProgressChanged(SeekBar arg0, int arg1, boolean fromUser) {
-            // TODO Auto-generated method stub
             Log.d(TAG, "onProgressChanged () arg1 = " + arg1 + ", fromUser = " + fromUser);
             if (fromUser) {
                 mp.seekTo(arg1);
@@ -218,16 +217,20 @@ public class ArticleActivity extends Activity {
 
     private void loadAudio() {
 
+        if (mp == null) {
+            mp = new MediaPlayer();
+        }
+
         if (mArticleFile.audio != null) {
 
             try {
-                if (mPlayingArticleFile != mArticleFile) {
+                if (Constant.PLAYING_ARTICLE_FILE != mArticleFile) {
                     mp.stop();
                     mp = new MediaPlayer();
                     mp.setDataSource(mArticleFile.audio);
                     mp.prepare();
                     mp.start();
-                    mPlayingArticleFile = mArticleFile;
+                    Constant.PLAYING_ARTICLE_FILE = mArticleFile;
                 }
 
                 int length = mp.getDuration();
@@ -268,7 +271,6 @@ public class ArticleActivity extends Activity {
             }
         }
 
-        Constant.PLAYING_ARTICLE_FILE = mArticleFile;
     }
 
     private String getTime(int timeMs) {
@@ -339,7 +341,6 @@ public class ArticleActivity extends Activity {
         } else {
             mArticleFile = list.get(index - 1);
         }
-        
 
         if (mArticleFile != null) {
 

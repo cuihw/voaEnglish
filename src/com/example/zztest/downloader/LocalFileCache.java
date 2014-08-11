@@ -132,7 +132,7 @@ public class LocalFileCache {
                         localFile = new ArticleFile();
                         localFile.key = pullParser.getAttributeValue(null, "key");
                         localFile.localFileName = pullParser.getAttributeValue(null, "localFileName");
-                        localFile.setTitle(pullParser.getAttributeValue(null, "title"));
+                        localFile.title = pullParser.getAttributeValue(null, "title");
                         localFile.translation = pullParser.getAttributeValue(null, "translation");
                         localFile.audio = pullParser.getAttributeValue(null, "audio");
                         localFile.audioUrl = pullParser.getAttributeValue(null, "audioUrl");
@@ -140,26 +140,43 @@ public class LocalFileCache {
                         localFile.lrcUrl = pullParser.getAttributeValue(null, "lrcUrl");
                         localFile.urlstring = pullParser.getAttributeValue(null, "urlstring");
                         localFile.subChannel = pullParser.getAttributeValue(null, "subChannel");
+                        localFile.date = Long.parseLong(pullParser.getAttributeValue(null, "date"));
                         localFile.progress = "[已下载]";
                         Log.d(TAG, "LocalFile from cache is: " + localFile.toString());
-
                     }
                     break;
 
                 case XmlPullParser.END_TAG:
                     if ("LocalFile".equals(pullParser.getName())) {
                         Log.d(TAG, "end LocalFile tag.");
-                        localFileMap.put(localFile.key, localFile);
+                        if (checkLocalFile(localFile)) {
+                            localFileMap.put(localFile.key, localFile);
+                        }
                         localFile = null;
                     }
                     break;
-
             }
-
             event = pullParser.next();
         }
 
         return localFileMap;
+    }
+
+    private boolean checkLocalFile(ArticleFile localFile) {
+        if (localFile.localFileName != null) {
+            File file = new File(localFile.localFileName);
+            if (file.exists()) {
+                if (localFile.audio !=null) {
+                    file = new File(localFile.audio);
+                    if (file.exists()) {
+                        return true;
+                    }
+                } else {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -189,8 +206,8 @@ public class LocalFileCache {
             if (localFile.localFileName != null)
                 serializer.attribute(null, "localFileName", localFile.localFileName);
 
-            if (localFile.getTitle() != null)
-                serializer.attribute(null, "title", localFile.getTitle());
+            if (localFile.title != null)
+                serializer.attribute(null, "title", localFile.title);
 
             if (localFile.translation != null)
                 serializer.attribute(null, "translation", localFile.translation);
@@ -212,6 +229,9 @@ public class LocalFileCache {
 
             if (localFile.subChannel != null)
                 serializer.attribute(null, "subChannel", localFile.subChannel);
+
+            if (localFile.date != 0)
+                serializer.attribute(null, "date", localFile.date + "");
 
             serializer.endTag(null, "LocalFile");
 

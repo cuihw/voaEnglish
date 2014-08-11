@@ -159,6 +159,9 @@ public class GrepArticleWebPage {
         }
 
         HashMap<String, ArticleFile> map = LocalFileCache.getInstance().getLocalFileMap();
+        if (map == null) {
+            map = new HashMap<String, ArticleFile>();
+        }
         map.put(mArticleInfo.key, mArticleInfo);
         LocalFileCache.getInstance().setmLocalFileMap(map);
         LocalFileCache.getInstance().wirteFile();

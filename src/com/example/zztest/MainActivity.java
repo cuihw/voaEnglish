@@ -3,17 +3,19 @@ package com.example.zztest;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.example.zztest.downloader.LocalFileCache;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.Toast;
+
+import com.example.zztest.downloader.LocalFileCache;
 
 public class MainActivity extends Activity {
 
@@ -38,10 +40,34 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
+
         initListView();
 
         LocalFileCache.getInstance();
+    }
+
+    private long mExitTime;
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        // TODO Auto-generated method stub
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if ((System.currentTimeMillis() - mExitTime) > 2000) {
+                Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
+                mExitTime = System.currentTimeMillis();
+            } else {
+                if (ArticleActivity.mp != null) {
+                    ArticleActivity.mp.stop();
+                    ArticleActivity.mp = null;
+                }
+                Constant.PLAYING_ARTICLE_FILE = null;
+                finish();
+            }
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     private void initListView() {

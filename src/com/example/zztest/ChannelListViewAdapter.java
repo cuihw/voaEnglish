@@ -24,6 +24,7 @@ public class ChannelListViewAdapter extends BaseAdapter {
 
     protected static final String TAG = "ChannelListViewAdapter";
 
+    @SuppressWarnings("unchecked")
     public ChannelListViewAdapter(Context context, ArrayList<ArticleFile> listItem) {
         mListItem = listItem;
         Collections.sort(mListItem);
@@ -78,7 +79,7 @@ public class ChannelListViewAdapter extends BaseAdapter {
 
         Log.d(TAG, "index = " + position);
 
-        holder.title.setText(mListItem.get(position).getTitle());
+        holder.title.setText(mListItem.get(position).title);
 
         if (mListItem.get(position).subChannel != null) {
             holder.subChannle.setVisibility(View.VISIBLE);
@@ -111,7 +112,7 @@ public class ChannelListViewAdapter extends BaseAdapter {
                 holder.download_text.setVisibility(View.INVISIBLE);
             }
         }
-        
+
         if (mListItem.get(position).equals(Constant.PLAYING_ARTICLE_FILE)) {
             holder.img_item.setBackgroundResource(R.drawable.play);
             convertView.setBackgroundResource(R.drawable.btn_default_normal);
@@ -132,6 +133,7 @@ public class ChannelListViewAdapter extends BaseAdapter {
         public ImageView img_item;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void notifyDataSetChanged() {
         Collections.sort(mListItem);

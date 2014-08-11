@@ -5,7 +5,6 @@ import java.util.regex.Pattern;
 
 import android.util.Log;
 
-
 public class ArticleFile implements Comparable{
 
     /*
@@ -19,7 +18,7 @@ public class ArticleFile implements Comparable{
     static private String regStr =  "\\(([^)]*)\\)";
     static private Pattern mPattern = Pattern.compile(regStr);
     public String key;
-    private String title;
+    public String title;
     public String localFileName;
     public String urlstring;
     public String translation;
@@ -38,12 +37,8 @@ public class ArticleFile implements Comparable{
         return afkey;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
+    public long getDateByTitle(String title) {
+        long retDate = 0;
         String dateString = getStringInBracket(title);
         if (dateString != null) {
             // 2014-8-6
@@ -64,9 +59,10 @@ public class ArticleFile implements Comparable{
                 number = number + number2;
             }
 
-            date = Long.parseLong(number);
+            retDate = Long.parseLong(number);
         }
-        Log.d(TAG, "date = " + date + ", title = " + title);
+        Log.d(TAG, "date = " + retDate + ", title = " + title);
+        return retDate;
     }
 
     private static String getStringInBracket(String expression) {
