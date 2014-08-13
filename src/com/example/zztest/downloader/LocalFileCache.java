@@ -39,6 +39,43 @@ public class LocalFileCache {
         return intences;
     }
 
+    public void deleteFile (ArticleFile file) {
+        if (mLocalFileMap.containsKey(file.key)) {
+            mLocalFileMap.remove(file.key);
+            if (file.localFileName != null) {
+                CacheToFile.deleteFile(file.localFileName);
+            }
+
+            if (file.lrc != null) {
+                CacheToFile.deleteFile(file.lrc);
+            }
+            if (file.translation != null) {
+                CacheToFile.deleteFile(file.translation);
+            }
+            if (file.audio != null) {
+                CacheToFile.deleteFile(file.audio);
+            }
+        }
+    }
+
+    public void clear() {
+        List<ArticleFile> list = new ArrayList<ArticleFile>();
+        Iterator<Entry<String, ArticleFile>> iter = mLocalFileMap.entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry entry = (Map.Entry) iter.next();
+            ArticleFile localFile = (ArticleFile) entry.getValue();
+            list.add(localFile);
+        }
+
+        mLocalFileMap.clear();
+
+        for (ArticleFile file : list) {
+            deleteFile(file);
+        }
+
+        writeFile();
+    }
+
     private LocalFileCache() {
 
         Log.d(TAG, "LocalFileCacheFile: " + LocalFileCacheFile);
@@ -52,7 +89,7 @@ public class LocalFileCache {
         readThread.start();
     }
 
-    public HashMap<String, ArticleFile> wirteFileCacheList(final HashMap<String, ArticleFile> mLocalFile) {
+    private HashMap<String, ArticleFile> wirteFileCacheList(final HashMap<String, ArticleFile> mLocalFile) {
 
         mLocalFileMap = mLocalFile;
         // new a thread to write the file.
@@ -66,7 +103,7 @@ public class LocalFileCache {
         return mLocalFile;
     }
 
-    public void wirteFile() {
+    public void writeFile() {
         wirteFileCacheList(mLocalFileMap);
     }
 

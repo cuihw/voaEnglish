@@ -153,10 +153,16 @@ public class WordView extends TextView {
     public void increaseFontsize() {
         mFontsize = mFontsize + 10;
         DY = mFontsize + 30;
+        mLoseFocusPaint.setTextSize(mFontsize);
+        mOnFocusePaint.setTextSize(mFontsize + 10);
+        this.invalidate();
     }
 
     public void decreaseFontsize() {
         mFontsize = mFontsize - 10;
         DY = mFontsize + 30;
+        mLoseFocusPaint.setTextSize(mFontsize);
+        mOnFocusePaint.setTextSize(mFontsize + 10);
+        this.invalidate();
     }
 }

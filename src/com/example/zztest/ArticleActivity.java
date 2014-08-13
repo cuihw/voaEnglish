@@ -14,21 +14,23 @@ import android.app.Activity;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
-import android.media.MediaPlayer.OnInfoListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
-import android.widget.Toast;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.ZoomControls;
 
 import com.example.zztest.downloader.ArticleFile;
 import com.example.zztest.downloader.CacheToFile;
@@ -62,9 +64,11 @@ public class ArticleActivity extends Activity {
 
     private WordView mWordView;
 
+    private LinearLayout mLrc_view;
+
     private LrcParser mLrcParser;
 
-    final Handler handler = new Handler() {
+    private final Handler handler = new Handler() {
 
         public void handleMessage(Message msg) { // handle message
             switch (msg.what) {
@@ -135,10 +139,28 @@ public class ArticleActivity extends Activity {
         mTimePlayedText = (TextView) findViewById(R.id.timeplayed);
 
         mSeekBar = (SeekBar) findViewById(R.id.seekbar);
-        
+
         mSeekBar.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
 
-        mWordView = (WordView)findViewById(R.id.lrc_text);
+        mWordView = (WordView) findViewById(R.id.lrc_text);
+
+        mLrc_view = (LinearLayout) findViewById(R.id.lrc_view);
+
+        ZoomControls zoomControls = (ZoomControls) findViewById(R.id.zoomcontrols);
+        zoomControls.setOnZoomInClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+                mWordView.increaseFontsize();
+            }
+        });
+        zoomControls.setOnZoomOutClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                mWordView.decreaseFontsize();
+            }
+        });
 
         Intent intent = getIntent();
 
@@ -182,7 +204,7 @@ public class ArticleActivity extends Activity {
     }
 
     public void onclickLrc(View view) {
-        mWordView.setVisibility(View.VISIBLE);
+        mLrc_view.setVisibility(View.VISIBLE);
         mWebView.setVisibility(View.INVISIBLE);
         loadLrcfile();
 
@@ -210,7 +232,7 @@ public class ArticleActivity extends Activity {
     private void loadText(boolean isTranslation) {
         String content = null;
 
-        mWordView.setVisibility(View.INVISIBLE);
+        mLrc_view.setVisibility(View.INVISIBLE);
         mWebView.setVisibility(View.VISIBLE);
 
         if (isTranslation) {
@@ -240,7 +262,7 @@ public class ArticleActivity extends Activity {
             Log.d(TAG, "onProgressChanged () arg1 = " + arg1 + ", fromUser = " + fromUser);
             if (fromUser) {
                 mp.seekTo(arg1);
-                if (mWordView.getVisibility() == View.VISIBLE) {
+                if (mLrc_view.getVisibility() == View.VISIBLE) {
                     loadLrcfile();
                 }
             }
@@ -256,14 +278,6 @@ public class ArticleActivity extends Activity {
             Log.d(TAG, "onStopTrackingTouch () arg1 = ");
         }
 
-    };
-    
-    private OnInfoListener mpListener = new OnInfoListener() {
-
-        @Override
-        public boolean onInfo(MediaPlayer arg0, int arg1, int arg2) {
-            return false;
-        }
     };
 
     private void loadAudio() {

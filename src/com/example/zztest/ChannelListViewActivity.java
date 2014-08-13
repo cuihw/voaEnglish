@@ -14,11 +14,17 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnLongClickListener;
 import android.widget.AdapterView;
-import android.widget.Toast;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.zztest.downloader.ArticleFile;
 import com.example.zztest.downloader.LocalFileCache;
@@ -41,7 +47,15 @@ public class ChannelListViewActivity extends Activity {
 
     ArrayList<ArticleFile> mListItem;
 
+    ArticleFile mSelectedArticleFile;
+
     private static final String TAG = "ChannelListViewActivity";
+
+    private static final int ITEM_DELETE = 1;
+
+    private static final int ITEM_DELETE_ALL = 2;
+
+    private static final int ITEM_DOWNLOAD_ALL = 3;
 
     private ProgressDialog pd;
 
@@ -49,20 +63,78 @@ public class ChannelListViewActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // TODO Auto-generated method stub
+
         super.onCreate(savedInstanceState);
+
+        Intent intent = getIntent();
+        mChannleIndex = intent.getIntExtra("channelindex", 0);
 
         setContentView(R.layout.activity_main);
         mListView = (ListView) findViewById(R.id.home_listview);
 
         mListView.setOnItemClickListener(mOnItemClickListener);
 
-        Intent intent = getIntent();
-        mChannleIndex = intent.getIntExtra("channelindex", 0);
-        setTitle(Constant.channels[mChannleIndex]);
+        mListView.setOnLongClickListener(mOnLongClickListener);
 
+        setTitle(Constant.channels[mChannleIndex]);
         getChannelData();
+
+        registerForContextMenu(mListView);
     }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+
+        super.onCreateContextMenu(menu, v, menuInfo);
+        menu.setHeaderTitle("请选择操作");
+        if (mChannleIndex == 4) {
+            menu.add(0, ITEM_DELETE, 0, "删除");
+            menu.add(0, ITEM_DELETE_ALL, 1, "删除所有");
+        } else {
+            menu.add(0, ITEM_DOWNLOAD_ALL, 0, "全部下载");
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+        String title = ((TextView) info.targetView.findViewById(R.id.title_text)).getText().toString();
+
+
+        switch (item.getItemId()) {
+            case ITEM_DELETE_ALL:
+                Toast.makeText(this, "ITEM_DELETE_ALL", Toast.LENGTH_SHORT).show();
+                mListItem.clear();
+                LocalFileCache.getInstance().clear();
+                break;
+            case ITEM_DELETE:
+                Toast.makeText(this, "ITEM_DELETE", Toast.LENGTH_SHORT).show();
+                for (ArticleFile file : mListItem) {
+                    if (file.title.equals(title)) {
+                        mSelectedArticleFile = file;
+                        mListItem.remove(file);
+                        break;
+                    }
+                }
+                if (mSelectedArticleFile != null) {
+                    LocalFileCache.getInstance().deleteFile(mSelectedArticleFile);
+                    LocalFileCache.getInstance().writeFile();
+                    mSelectedArticleFile = null;
+                }
+
+                break;
+            case ITEM_DOWNLOAD_ALL:
+                Toast.makeText(this, "全部下载，请挨个点击。", Toast.LENGTH_SHORT).show();
+                break;
+            default:
+                break;
+        }
+        mChannelListViewAdapter.notifyDataSetChanged();
+        return super.onContextItemSelected(item);
+
+    }
+
+
 
     private void getChannelData() {
         switch (mChannleIndex) {
@@ -87,7 +159,6 @@ public class ChannelListViewActivity extends Activity {
 
     @Override
     protected void onResume() {
-        // TODO Auto-generated method stub
         super.onResume();
         if (mListItem != null) {
             mChannelListViewAdapter.notifyDataSetChanged();
@@ -107,6 +178,7 @@ public class ChannelListViewActivity extends Activity {
             }
             mChannelListViewAdapter = new ChannelListViewAdapter(ChannelListViewActivity.this, mListItem);
             mListView.setAdapter(mChannelListViewAdapter);
+
         }
     }
 
@@ -204,6 +276,11 @@ public class ChannelListViewActivity extends Activity {
         }
     };
 
+    private OnLongClickListener mOnLongClickListener = new OnLongClickListener(){
+        @Override
+        public boolean onLongClick(View v) {
+            return false;
+        }};
 
     private Handler mHandler = new Handler() {
 

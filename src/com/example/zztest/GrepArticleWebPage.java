@@ -167,7 +167,7 @@ public class GrepArticleWebPage {
         }
         map.put(mArticleInfo.key, mArticleInfo);
         LocalFileCache.getInstance().setmLocalFileMap(map);
-        LocalFileCache.getInstance().wirteFile();
+        LocalFileCache.getInstance().writeFile();
 
         mProgress = 100;
         notifyTheProgress();
@@ -224,7 +224,7 @@ public class GrepArticleWebPage {
         }
         map.put(mArticleInfo.key, mArticleInfo);
         LocalFileCache.getInstance().setmLocalFileMap(map);
-        LocalFileCache.getInstance().wirteFile();
+        LocalFileCache.getInstance().writeFile();
     }
 
     private Document getWebpageDoc(String url) {

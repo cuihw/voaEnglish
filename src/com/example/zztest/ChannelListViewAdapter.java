@@ -7,6 +7,7 @@ import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
@@ -71,7 +72,6 @@ public class ChannelListViewAdapter extends BaseAdapter {
             holder.zimu = (TextView) convertView.findViewById(R.id.zimu_text);
             holder.download_text = (TextView) convertView.findViewById(R.id.download_text);
             holder.img_item = (ImageView) convertView.findViewById(R.id.img_item);
-            
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
