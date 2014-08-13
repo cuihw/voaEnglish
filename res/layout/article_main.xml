@@ -47,7 +47,8 @@
             android:layout_marginRight="5dp"
             android:background="@drawable/button_select"
             android:text="@string/lrc"
-            android:visibility="invisible" />
+            android:onClick="onclickLrc"
+             />
     </LinearLayout>
 
     <LinearLayout
@@ -59,15 +60,19 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent" >
-        <WebView
-            android:id="@+id/webView1"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-        
-        
-        
-        </FrameLayout>
 
+            <WebView
+                android:id="@+id/webView1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <com.example.zztest.WordView
+                android:id="@+id/lrc_text"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="invisible"
+                />
+        </FrameLayout>
     </LinearLayout>
 
     <LinearLayout

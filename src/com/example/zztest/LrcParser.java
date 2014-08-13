@@ -7,16 +7,24 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import android.util.Log;
+
 public class LrcParser {
+
+    private static final String TAG = "LrcParser";
+
     private List<String> mWords = new ArrayList<String>();
 
-    private List mTimeList = new ArrayList();
+    private List<Integer> mTimeList = new ArrayList<Integer>();
 
-    // 处理歌词文件
+    private Map<String, String> mWordsMap = new HashMap<String, String>();
+
     public void readLRC(String path) {
 
         File file = new File(path);
@@ -25,36 +33,40 @@ public class LrcParser {
 
             FileInputStream fileInputStream = new FileInputStream(file);
 
-            InputStreamReader inputStreamReader = new InputStreamReader(
+            InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, "utf-8");
 
-            fileInputStream, "utf-8");
-
-            BufferedReader bufferedReader = new BufferedReader(
-
-            inputStreamReader);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
             String s = "";
 
             while ((s = bufferedReader.readLine()) != null) {
 
-                addTimeToList(s);
+                int time = addTimeToList(s);
 
-                if ((s.indexOf("[ar:") != -1) || (s.indexOf("[ti:") != -1)
+                String key = time + "";
 
-                || (s.indexOf("[by:") != -1)) {
+                Log.d(TAG, "read line = " + s + "; key = " + key);
 
+                if ((s.indexOf("[ar:") != -1)
+                        || (s.indexOf("[ti:") != -1)
+                        || (s.indexOf("[offset:") != -1)
+                        || (s.indexOf("[al:") != -1)
+                        || (s.indexOf("[by:") != -1)) {
+
+                    key = s.substring("[".length(), s.indexOf(":"));
                     s = s.substring(s.indexOf(":") + 1, s.indexOf("]"));
 
                 } else {
-
-                    String ss = s.substring(s.indexOf("["), s.indexOf("]") + 1);
-
-                    s = s.replace(ss, "");
-
+                    if (s.indexOf("[") != -1) {
+                        String ss = s.substring(s.indexOf("["), s.indexOf("]") + 1);
+                        s = s.replace(ss, "");
+                    }
                 }
 
-                mWords.add(s);
-
+                if (key != "-1") {
+                    mWords.add(s);
+                    mWordsMap.put(key, s);
+                }
             }
 
             bufferedReader.close();
@@ -74,17 +86,20 @@ public class LrcParser {
             e.printStackTrace();
 
             mWords.add("没有读取到歌词");
-
         }
 
     }
 
-    public List getWords() {
+    public List<String> getWords() {
         return mWords;
     }
 
-    public List getTimeList() {
+    public List<Integer> getTimeList() {
         return mTimeList;
+    }
+
+    public Map<String, String> getmWordsMap() {
+        return mWordsMap;
     }
 
     // parser the time.
@@ -106,24 +121,23 @@ public class LrcParser {
 
         int currentTime = (minute * 60 + second) * 1000 + millisecond * 10;
 
-
-
         return currentTime;
-
     }
 
 
 
-    private void addTimeToList(String string) {
+    private int addTimeToList(String string) {
+        int time = -1;
 
         Matcher matcher = Pattern.compile("\\[\\d{1,2}:\\d{1,2}([\\.:]\\d{1,2})?\\]").matcher(string);
 
         if (matcher.find()) {
 
             String str = matcher.group();
-
-            mTimeList.add(new LrcParser().timeParser(str.substring(1, str.length() - 1)));
-
+            time = timeParser(str.substring(1, str.length() - 1));
+            mTimeList.add(time);
         }
+
+        return time;
     }
 }

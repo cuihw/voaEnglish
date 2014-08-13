@@ -2,7 +2,6 @@ package com.example.zztest;
 
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -25,6 +24,7 @@ import com.example.zztest.downloader.ArticleFile;
 import com.example.zztest.downloader.LocalFileCache;
 
 public class ChannelListViewActivity extends Activity {
+
     private int mChannleIndex = 0;
 
     private static GrepChannelFormWebpage mGrepWebpageStandard_update;

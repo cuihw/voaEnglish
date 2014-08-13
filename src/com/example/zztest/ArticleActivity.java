@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -39,6 +40,8 @@ public class ArticleActivity extends Activity {
 
     private static final int FRESH_TIME = 1;
 
+    private static final int SHOW_LRC = 2;
+
     private WebView mWebView;
 
     boolean mModifyFlag = false;
@@ -57,6 +60,10 @@ public class ArticleActivity extends Activity {
 
     private SeekBar mSeekBar;
 
+    private WordView mWordView;
+
+    private LrcParser mLrcParser;
+
     final Handler handler = new Handler() {
 
         public void handleMessage(Message msg) { // handle message
@@ -73,6 +80,26 @@ public class ArticleActivity extends Activity {
 
                     Message message = handler.obtainMessage(FRESH_TIME);
                     handler.sendMessageDelayed(message, 1000);
+                    break;
+
+                case SHOW_LRC:
+                    if (mp != null && mp.isPlaying() && mLrcParser != null) {
+                        List<Integer> timeList = mLrcParser.getTimeList();
+                        int current = mp.getCurrentPosition();
+                        for (int i = 0; i < timeList.size(); i++) {
+                            int offset = timeList.get(i) - current;
+                            if (offset >= 0) {
+                                if (i > 0) {
+                                    mWordView.setFocuseTextKey(timeList.get(i - 1) + "");
+                                }
+                                Message msg1 = handler.obtainMessage(SHOW_LRC);
+                                handler.sendMessageDelayed(msg1, offset);
+                                break;
+                            }
+                        }
+                    }
+                    break;
+
             }
             super.handleMessage(msg);
         }
@@ -111,6 +138,8 @@ public class ArticleActivity extends Activity {
         
         mSeekBar.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
 
+        mWordView = (WordView)findViewById(R.id.lrc_text);
+
         Intent intent = getIntent();
 
         String articleKey = intent.getStringExtra("article_key");
@@ -127,11 +156,9 @@ public class ArticleActivity extends Activity {
                 translationButton.setVisibility(View.INVISIBLE);
             }
 
-            if (mArticleFile.audio != null) {
-                loadAudio();
-            } else {
-                Toast.makeText(this, "Sorry, this article has no audio file. \r\n本篇文章没有同步音频！", Toast.LENGTH_SHORT).show();
-            }
+            showLrcButton();
+
+            loadAudio();
         }
     }
 
@@ -153,7 +180,16 @@ public class ArticleActivity extends Activity {
     public void onclickText(View view) {
         loadText(false);
     }
-    
+
+    public void onclickLrc(View view) {
+        mWordView.setVisibility(View.VISIBLE);
+        mWebView.setVisibility(View.INVISIBLE);
+        loadLrcfile();
+
+        translationButton.setBackgroundResource(R.drawable.btn_default_normal);
+        textButton.setBackgroundResource(R.drawable.btn_default_normal);
+        mLrcButton.setBackgroundResource(R.drawable.btn_default_pressed);
+    }
 
     public void onclickPreviously(View view) {
         playPreviously();
@@ -174,15 +210,19 @@ public class ArticleActivity extends Activity {
     private void loadText(boolean isTranslation) {
         String content = null;
 
+        mWordView.setVisibility(View.INVISIBLE);
+        mWebView.setVisibility(View.VISIBLE);
+
         if (isTranslation) {
             content = CacheToFile.readFile(mArticleFile.translation);
             translationButton.setBackgroundResource(R.drawable.btn_default_pressed);
             textButton.setBackgroundResource(R.drawable.button_select);
-
+            mLrcButton.setBackgroundResource(R.drawable.button_select);
         } else {
             content = CacheToFile.readFile(mArticleFile.localFileName);
             translationButton.setBackgroundResource(R.drawable.button_select);
             textButton.setBackgroundResource(R.drawable.btn_default_pressed);
+            mLrcButton.setBackgroundResource(R.drawable.button_select);
         }
 
         if (content != null) {
@@ -200,6 +240,9 @@ public class ArticleActivity extends Activity {
             Log.d(TAG, "onProgressChanged () arg1 = " + arg1 + ", fromUser = " + fromUser);
             if (fromUser) {
                 mp.seekTo(arg1);
+                if (mWordView.getVisibility() == View.VISIBLE) {
+                    loadLrcfile();
+                }
             }
         }
 
@@ -323,7 +366,6 @@ public class ArticleActivity extends Activity {
         } else {
             mArticleFile = list.get(index + 1);
         }
-        
 
         if (mArticleFile != null) {
 
@@ -334,6 +376,8 @@ public class ArticleActivity extends Activity {
             } else {
                 translationButton.setVisibility(View.VISIBLE);
             }
+
+            showLrcButton();
 
             if (mArticleFile.audio != null) {
                 loadAudio();
@@ -360,8 +404,43 @@ public class ArticleActivity extends Activity {
                 translationButton.setVisibility(View.VISIBLE);
             }
 
+            showLrcButton();
+
             if (mArticleFile.audio != null) {
                 loadAudio();
+            }
+        }
+    }
+
+    public void showLrcButton() {
+        mLrcParser = null;
+        if (mArticleFile.lrc != null) {
+            mLrcButton.setVisibility(View.VISIBLE);
+
+            mLrcParser = new LrcParser();
+
+            mLrcParser.readLRC(mArticleFile.lrc);
+
+            mWordView.setLrcParser(mLrcParser);
+        } else {
+            mLrcButton.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    private void loadLrcfile() {
+        if (mArticleFile.lrc != null && mLrcParser != null) {
+            List<Integer> timeList = mLrcParser.getTimeList();
+            int current = mp.getCurrentPosition();
+            for (int i = 0; i < timeList.size(); i++) {
+                int offset = timeList.get(i) - current;
+                if (offset >= 0) {
+                    if (i > 0) {
+                        mWordView.setFocuseTextKey(timeList.get(i-1) + "");
+                    }
+                    Message msg = handler.obtainMessage(SHOW_LRC);
+                    handler.sendMessageDelayed(msg, offset);
+                    break;
+                }
             }
         }
     }

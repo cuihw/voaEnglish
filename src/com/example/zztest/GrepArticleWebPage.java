@@ -245,6 +245,8 @@ public class GrepArticleWebPage {
         mRetryDownloadfile = 5;
         downloadFile(urlstring, filename);
 
+        mArticleInfo.lrc = filename;
+        mArticleInfo.lrcUrl = urlstring;
     }
 
     private void downloadAudioFile(String urlstring) {
