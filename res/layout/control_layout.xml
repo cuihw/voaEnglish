@@ -29,8 +29,9 @@
             android:layout_marginRight="10dp"
             android:layout_weight="1"
             android:clickable="true"
+            android:onClick="onclickRepeat"
             android:background="@drawable/button_select"
-            android:src="@drawable/repeat_all_select" />
+            android:src="@drawable/repeat_single_select" />
 
         <ImageView
             android:id="@+id/backward"

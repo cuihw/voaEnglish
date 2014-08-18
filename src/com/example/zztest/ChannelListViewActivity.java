@@ -4,6 +4,7 @@ package com.example.zztest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -26,6 +27,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.task.Task;
+import com.example.task.TaskQueue;
 import com.example.zztest.downloader.ArticleFile;
 import com.example.zztest.downloader.LocalFileCache;
 
@@ -57,7 +60,7 @@ public class ChannelListViewActivity extends Activity {
 
     private static final int ITEM_DOWNLOAD_ALL = 3;
 
-    private ProgressDialog pd;
+    private ProgressDialog mProgressDialog;
 
     HashMap<String, GrepArticleWebPage> grepArticleWebPageMap = new HashMap<String, GrepArticleWebPage>();
 
@@ -124,7 +127,8 @@ public class ChannelListViewActivity extends Activity {
 
                 break;
             case ITEM_DOWNLOAD_ALL:
-                Toast.makeText(this, "全部下载，请挨个点击。", Toast.LENGTH_SHORT).show();
+                // Toast.makeText(this, "全部下载，请挨个点击。", Toast.LENGTH_SHORT).show();
+                downloadAll();
                 break;
             default:
                 break;
@@ -134,7 +138,38 @@ public class ChannelListViewActivity extends Activity {
 
     }
 
+    private void downloadAll() {
+        Log.d(TAG, "downloadAll() ");
+        List<Task> mTaskList = new ArrayList<Task>();
+        if (mListItem != null) {
+            Log.d(TAG, "new TaskQueue() ");
+            TaskQueue tq = new TaskQueue();
 
+            int i = 0;
+            for (final ArticleFile file : mListItem) {
+                final int id = i++;
+                Log.d(TAG, "new Task() ");
+                Task task = new Task() {
+
+                    @Override
+                    public void execute() {
+
+                        Log.d(TAG, "execute() ");
+                        GrepArticleWebPage grepArticleWebPage = new GrepArticleWebPage(mHandler, file);
+                        grepArticleWebPageMap.put(file.key, grepArticleWebPage);
+                        grepArticleWebPage.syncGetArticleInfo();
+                    }
+
+                    @Override
+                    public int getID() {
+                        return id;
+                    }
+                };
+                mTaskList.add(task);
+            }
+            tq.putTask(mTaskList);
+        }
+    }
 
     private void getChannelData() {
         switch (mChannleIndex) {
@@ -291,11 +326,11 @@ public class ChannelListViewActivity extends Activity {
             switch (msg.what) {
                 case Constant.UP_DATE_DATA:
                     Log.d(TAG, "handleMessage(Message msg) UP_DATE_DATA");
-                    pd.dismiss();
+                    mProgressDialog.dismiss();
                     getChannelData();
                     break;
                 case Constant.FAILED_UPDATE:
-                    pd.dismiss();
+                    mProgressDialog.dismiss();
                     Toast.makeText(ChannelListViewActivity.this, "网络状况不好，不能更新文章列表！ \r\n跳转到本地文章。", Toast.LENGTH_SHORT).show();
                     mChannleIndex = 4;
                     getChannelData();
@@ -324,7 +359,15 @@ public class ChannelListViewActivity extends Activity {
     };
 
     private void showProgress() {
-        pd = ProgressDialog.show(ChannelListViewActivity.this, null, "Loading....    加载中，请稍后……");
+        if (mProgressDialog == null) {
+            Log.d(TAG, "new ProgressDialog ");
+            mProgressDialog = new ProgressDialog(this);
+            mProgressDialog.setTitle("Loading....    ");
+            mProgressDialog.setMessage("加载中，请稍后……");
+        }
+
+        Log.d(TAG, "ProgressDialog .show");
+        mProgressDialog.show();
     }
 
     protected void getArticlefromWeb(int position) {
@@ -338,8 +381,9 @@ public class ChannelListViewActivity extends Activity {
         } else {
             GrepArticleWebPage grepArticleWebPage = grepArticleWebPageMap.get(af.key);
             if (grepArticleWebPage == null) {
-                grepArticleWebPage = new GrepArticleWebPage(mHandler, position, af);
+                grepArticleWebPage = new GrepArticleWebPage(mHandler, af);
                 grepArticleWebPageMap.put(af.key, grepArticleWebPage);
+                grepArticleWebPage.getArticleInfo();
             }
         }
 

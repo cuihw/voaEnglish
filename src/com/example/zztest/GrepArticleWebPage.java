@@ -25,8 +25,6 @@ public class GrepArticleWebPage {
 
     private static final String TAG = "GrepArticleWebPage";
 
-    public int __index;
-
     private Handler mHandler;
 
     private int mRetry = 5;
@@ -53,15 +51,12 @@ public class GrepArticleWebPage {
 
     private int mRetryDownloadfile = 5;
 
-    public GrepArticleWebPage(Handler handler, int index, ArticleFile item) {
+    public GrepArticleWebPage(Handler handler, ArticleFile item) {
         mHandler = handler;
-        __index = index;
         mArticleInfo = item;
 
         mUrl = mArticleInfo.urlstring;
-        if (mArticleInfo.localFileName == null) {
-            getArticleInfo(mArticleInfo.urlstring);
-        }
+
     }
 
     public String getAtricle() {
@@ -84,20 +79,33 @@ public class GrepArticleWebPage {
         return mMp3webUrl;
     }
 
-    private void getArticleInfo(final String url) {
-
-        // run in background thread.
-        new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-
-                mDocument = getWebpageDoc(url);
-
-                parserDocument(mDocument);
+    public void syncGetArticleInfo() {
+        mDocument = getWebpageDoc(mUrl);
+        if (mDocument != null) {
+            parserDocument(mDocument);
+        } else {
+            if (mRetry > 0) {
+                mRetry--;
+                syncGetArticleInfo();
             }
+        }
+    }
 
-        }).start();
+    public void getArticleInfo() {
+        if (mUrl != null) {
+            // run in background thread.
+            new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+
+                    mDocument = getWebpageDoc(mUrl);
+
+                    parserDocument(mDocument);
+                }
+
+            }).start();
+        }
     }
 
     protected void parserDocument(Document doc) {
@@ -105,7 +113,7 @@ public class GrepArticleWebPage {
             if (mRetry > 0) {
                 mRetry--;
                 Log.d(TAG, "retry to get the data.");
-                getArticleInfo(mUrl);
+                getArticleInfo();
             } else {
                 Message msg = mHandler.obtainMessage();
                 msg.what = Constant.FAILED_UPDATE;
@@ -113,6 +121,7 @@ public class GrepArticleWebPage {
             }
             return;
         }
+
         Elements elements = doc.getElementsByTag("body");
         Element mBody = elements.first();
         Element content = mBody.getElementById("content");

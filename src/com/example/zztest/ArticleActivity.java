@@ -68,6 +68,16 @@ public class ArticleActivity extends Activity {
 
     private LrcParser mLrcParser;
 
+    private static ArticleFile mBeginRepeatArticleFile = null;
+
+    private int mRepeatMode = SINGLE_REPEAT;
+
+    private static final int SINGLE_REPEAT = 1;
+
+    private static final int REPEAT_ALL = 2;
+
+    private static final int REPEAT_ONCE = 3;
+
     private final Handler handler = new Handler() {
 
         public void handleMessage(Message msg) { // handle message
@@ -146,6 +156,8 @@ public class ArticleActivity extends Activity {
 
         mLrc_view = (LinearLayout) findViewById(R.id.lrc_view);
 
+        mBeginRepeatArticleFile = null;
+
         ZoomControls zoomControls = (ZoomControls) findViewById(R.id.zoomcontrols);
         zoomControls.setOnZoomInClickListener(new OnClickListener() {
 
@@ -169,6 +181,8 @@ public class ArticleActivity extends Activity {
         HashMap<String, ArticleFile> map = LocalFileCache.getInstance().getLocalFileMap();
 
         mArticleFile = map.get(articleKey);
+
+        mBeginRepeatArticleFile = mArticleFile;
 
         if (mArticleFile != null) {
 
@@ -214,10 +228,12 @@ public class ArticleActivity extends Activity {
     }
 
     public void onclickPreviously(View view) {
+        mBeginRepeatArticleFile = mArticleFile;
         playPreviously();
     }
     
     public void onclickNext(View view) {
+        mBeginRepeatArticleFile = mArticleFile;
         playNext();
     }
 
@@ -227,6 +243,23 @@ public class ArticleActivity extends Activity {
 
     public void onclickExit(View view) {
         ArticleActivity.this.finish();
+    }
+
+    public void onclickRepeat(View view) {
+        ImageView repeat_view = (ImageView) findViewById(R.id.repeat);
+
+        if (SINGLE_REPEAT == mRepeatMode) {
+            mRepeatMode = REPEAT_ALL;
+            repeat_view.setImageResource(R.drawable.repeat_all_select);
+
+        } else if (REPEAT_ALL == mRepeatMode) {
+            mRepeatMode = REPEAT_ONCE;
+            repeat_view.setImageResource(R.drawable.repeat_sequence_select);
+
+        } else if (REPEAT_ONCE == mRepeatMode) {
+            mRepeatMode = SINGLE_REPEAT;
+            repeat_view.setImageResource(R.drawable.repeat_single_select);
+        }
     }
 
     private void loadText(boolean isTranslation) {
@@ -300,13 +333,19 @@ public class ArticleActivity extends Activity {
 
                 int length = mp.getDuration();
 
-                mp.setOnCompletionListener(new OnCompletionListener(){
+                mp.setOnCompletionListener(new OnCompletionListener() {
                     @Override
                     public void onCompletion(MediaPlayer arg0) {
+                        Log.d(TAG, "onCompletion () ....");
 
-                        Log.d(TAG, "onCompletion () ....................................................................");
-                        playNext();
-                    }});
+                        if (SINGLE_REPEAT == mRepeatMode) {
+                            mp.seekTo(1);
+                            mp.start();
+                        } else {
+                            playNext();
+                        }
+                    }
+                });
 
                 mTimeTotalText.setText(getTime(length));
 
@@ -371,14 +410,29 @@ public class ArticleActivity extends Activity {
         }
         return listItem;
     }
-    
+
     private void playNext() {
+
+        if (REPEAT_ALL == mRepeatMode) {
+
+        } else if (REPEAT_ONCE == mRepeatMode) {
+
+        }
+
         ArrayList<ArticleFile> list = getListItem ();
         int index = list.indexOf(mArticleFile);
         if (list.size() == index +1) {
             mArticleFile = list.get(0);
         } else {
             mArticleFile = list.get(index + 1);
+        }
+
+        if (REPEAT_ALL == mRepeatMode) {
+            ;
+        } else if (REPEAT_ONCE == mRepeatMode) {
+            if (mArticleFile == mBeginRepeatArticleFile) {
+                mArticleFile = null;
+            };
         }
 
         if (mArticleFile != null) {
