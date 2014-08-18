@@ -126,8 +126,6 @@ public class GrepArticleWebPage {
         Element mBody = elements.first();
         Element content = mBody.getElementById("content");
 
-        mAtricle = content.html();
-
         Element menubar = mBody.getElementById("menubar");
 
         if (menubar != null) {
@@ -135,11 +133,11 @@ public class GrepArticleWebPage {
             for (int i = 0; i < links.size(); i++) {
                 Element ele = links.get(i);
 
-                String linkHref = ele.attr("href");
+                String linkHref = ele.attr("abs:href");
                 if (ele.id().equalsIgnoreCase("mp3")) {
                     mMp3webUrl = linkHref;
                 } else if (ele.id().equalsIgnoreCase("lrc")) {
-                    mLrcUrl = Constant.VOA_ROOT.link + linkHref;
+                    mLrcUrl = linkHref;
                 } else if (ele.id().equalsIgnoreCase("EnPage")) {
                     mTranslationlink = linkHref;
                 }
@@ -162,7 +160,32 @@ public class GrepArticleWebPage {
 
         if (mMp3webUrl != null) {
             downloadAudioFile(mMp3webUrl);
-        } else {
+        }
+
+        if (content != null) {
+
+            Elements imageElements = content.getElementsByClass("contentImage");
+
+            if (imageElements != null) {
+                // <font COLOR="#990030"> </font>
+                getImages(imageElements);
+            }
+
+            mAtricle = content.html();
+
+            if (mAtricle.indexOf("imagecaption") != -1) {
+                int begin = mAtricle.indexOf("imagecaption");
+                begin = mAtricle.indexOf(">", begin) + ">".length();
+
+                String fontArticle = mAtricle.substring(0, begin);
+                fontArticle = fontArticle + "<font COLOR=\"#999999\">";
+                int end = mAtricle.indexOf("<", begin);
+                fontArticle = fontArticle + mAtricle.substring(begin, end);
+                fontArticle = fontArticle + "</font>";
+                fontArticle = fontArticle + mAtricle.substring(end);
+                mAtricle = fontArticle;
+            }
+
             String filename = CACHE_PATH + "/" + mArticleInfo.key + ".txt";
 
             CacheToFile.writeFile(filename, mAtricle.getBytes());
@@ -182,6 +205,32 @@ public class GrepArticleWebPage {
         notifyTheProgress();
     }
 
+    // <DIV class=contentImage><IMG
+    // src="/images/201408/33071B56-8F79-4199-AEF6-3BAAD68C69AD_w268_r1_s.jpg"><BR><SPAN
+    // class=imagecaption>The Africa Development Bank Community Agriculture Infrastructure
+    // Improvement Project reduced transport costs and helped farmers earn higher incomes form
+    // agricultural commodities. (Photo: AfDB)</SPAN></DIV>
+    private Elements getImages(Elements imageElements) {
+        Elements elements = new Elements();
+        for (Element imageElement : imageElements) {
+            Elements media = imageElement.select("[src]");
+
+            for (Element src : media) {
+                if (src.tagName().equals("img")) {
+                    String imageurl = src.attr("abs:src");
+                    Log.d(TAG, "src = " + imageurl);
+                    String filename = CACHE_PATH + getFileName(imageurl);
+                    mRetryDownloadfile = 5;
+                    downloadFile(imageurl, filename);
+                    src.attr("src", filename);
+                }
+            }
+
+            elements.add(imageElement);
+
+        }
+        return elements;
+    }
 
     private void getTranslationContent(final String link) {
 
@@ -192,13 +241,10 @@ public class GrepArticleWebPage {
             @Override
             public void run() {
 
-                Log.d(TAG, "mTranslationlink = " + mTranslationlink);
-                if (mUrl != null) {
-                    String translationPath = mUrl.substring(0, mUrl.lastIndexOf("/") + "/".length());
-
-                    mTranslationlink = translationPath + link;
+                if (mTranslationlink.startsWith("http://")) {
 
                     Log.d(TAG, "mTranslationlink = " + mTranslationlink);
+
                     Document doc = getWebpageDoc(mTranslationlink);
 
                     getTranslationContent(doc);
@@ -265,11 +311,6 @@ public class GrepArticleWebPage {
 
         mArticleInfo.audio = filename;
         mArticleInfo.audioUrl = urlstring;
-        filename = CACHE_PATH + "/" + mArticleInfo.key + ".txt";
-
-        CacheToFile.writeFile(filename, mAtricle.getBytes());
-
-        mArticleInfo.localFileName = filename;
 
     }
 

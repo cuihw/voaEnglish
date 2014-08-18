@@ -283,7 +283,10 @@ public class ArticleActivity extends Activity {
         if (content != null) {
             content = "<P>" + mArticleFile.title + "</P><P></P>" + content;
 
-            mWebView.loadUrl(mArticleFile.localFileName);
+            // mWebView.loadUrl(mArticleFile.localFileName);
+
+            mWebView.getSettings().setLoadsImagesAutomatically(true);
+
             mWebView.loadDataWithBaseURL(null, content, "text/html", "UTF-8", null);
         }
 
