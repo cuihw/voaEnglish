@@ -93,7 +93,7 @@ public class TaskQueue {
         return task;
     }
 
-    private void putRunningTaskQueue(final Task task){
+    private void putRunningTaskQueue(final Task task) {
         synchronized (PutLock) {
             Log.d(TAG, "putRunningTaskQueue id = " + task.getID());
             mRunningTaskList.add(task);
