@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+
+    <!--白色 -->
+    <color name="white1">#FFF</color>
+    <!--白烟 -->
+    <color name="white2">#F5F5F5</color>
+
+    <!--淡灰色 -->
+    <color name="Gray1">#DCDCDC</color>
+    <!--浅灰色 -->
+    <color name="Gray2">#D3D3D3</color>
+    <!--灰色 -->
+    <color name="Gray3">#808080</color>
+
+    <!--浅灰色 -->
+    <color name="Gray4">#FF5a5e69</color>
+
+    <!--暗淡灰 -->
+    <color name="Gray5">#333333</color>
+
+    <!--蓝 -->
+    <color name="Blue1">#8cceea</color>
+    <color name="Blue2">#4876FF</color>
+    <color name="Blue3">#191970</color>
+
+    <color name="red1">#ff8787</color>
+    <color name="red2">#ff3b4d</color>
+    <color name="red3">#CD5C5C</color>
+    <color name="red4">#d12b28</color>
+    <color name="red5">#5e0003</color>
+    <color name="orange">#ff924f</color>
+
+    <color name="orange1">#d4aa4f</color>
+    <color name="orange2">#f9e3c1</color>
+
+    <color name="transparent10">#16000000</color>
+    <color name="transparent20">#33000000</color>
+    <color name="transparent50">#80000000</color>
+    <color name="transparent70">#b0000000</color>
+
+</resources>

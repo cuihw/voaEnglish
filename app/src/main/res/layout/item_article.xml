@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="@dimen/item_pading"
+    >
+
+    <ImageView
+        android:id="@+id/icon_article"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@mipmap/icon_article"
+        android:layout_centerVertical="true"
+        />
+
+    <TextView
+        android:id="@+id/title"
+        android:padding="@dimen/item_pading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/title"
+        android:layout_toRightOf="@+id/icon_article"
+        android:lines="2"
+        />
+
+    <TextView
+        android:id="@+id/channel"
+        android:padding="@dimen/item_pading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/channel"
+        android:layout_below="@+id/title"
+        android:layout_toRightOf="@+id/icon_article"
+        />
+
+    <TextView
+        android:id="@+id/translation"
+        android:paddingLeft="@dimen/item_pading"
+        android:layout_toRightOf="@+id/icon_article"
+        android:layout_below="@+id/channel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="翻译"
+        android:drawableRight="@mipmap/icon_quest"
+        />
+    <TextView
+        android:id="@+id/lrc"
+        android:layout_toRightOf="@+id/translation"
+        android:layout_below="@+id/channel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/item_pading"
+        android:text="字幕"
+        android:drawableRight="@mipmap/icon_article_lrc"
+        />
+
+    <ImageView
+        android:id="@+id/favorite"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignBottom="@+id/translation"
+        android:layout_marginRight="@dimen/item"
+        android:src="@mipmap/icon_favorite_small"
+        />
+
+    <ImageView
+        android:id="@+id/download"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignBottom="@+id/translation"
+        android:layout_alignParentRight="true"
+        android:src="@mipmap/icon_download"
+        />
+
+</RelativeLayout>

@@ -1,0 +1,55 @@
+apply plugin: 'com.android.application'
+
+
+
+android {
+    compileSdkVersion 28
+    defaultConfig {
+        applicationId "example.com.zztest"
+        minSdkVersion 16
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+apply plugin: 'org.greenrobot.greendao' // apply plugin
+greendao {
+    schemaVersion 1
+    targetGenDir 'src/main/java'
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    implementation 'com.android.support:design:28.0.0'
+
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+    // okgo 的网络请求库，内部使用的是okhttp，
+    implementation 'com.lzy.net:okgo:3.0.4'
+    implementation 'com.lzy.net:okrx2:2.0.2'
+    implementation 'com.lzy.net:okserver:2.0.5'
+    implementation 'com.jakewharton:butterknife:8.8.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+
+    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.classic.adapter:commonadapter:2.0'
+    implementation 'org.jsoup:jsoup:1.11.3'
+
+    // progress
+    implementation 'com.kaopiz:kprogresshud:1.1.0'
+
+    implementation 'org.greenrobot:greendao:3.0.0' // add library
+}

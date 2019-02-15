@@ -1,0 +1,15 @@
+<resources>
+
+    <!-- Base application theme.      Base.Theme.AppCompat.Light Base.Theme.AppCompat.Light.DarkActionBar-->
+    <style name="AppTheme" parent="Base.Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="MyTabLayoutTextAppearance">
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/Gray5</item>
+    </style>
+</resources>
