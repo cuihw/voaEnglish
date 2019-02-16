@@ -816,6 +816,13 @@ public final class FileUtils {
         try {
             // 创建文件对象
             File fileText = new File(strFilename);
+            File parentFile = fileText.getParentFile();
+            if (!parentFile.exists()) {
+                parentFile.mkdirs();
+            }
+            if (!fileText.exists()) {
+                fileText.createNewFile();
+            }
             // 向文件写入对象写入信息
             FileWriter fileWriter = new FileWriter(fileText);
 

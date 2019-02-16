@@ -15,6 +15,10 @@ import example.com.zztest.utils.Utils;
 public class Task {
     private static final String TAG = "TASK";
 
+    String header = "<head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,minimum-scale=1.0,maximum-scale=1.2,user-scalable=no\"></head>";
+    String body = "<body>";
+    String endbody = "</body>";
+
     ArticleBean articleBean;
 
     IOnDownload onDownload;
@@ -68,12 +72,18 @@ public class Task {
         Element content = data.getElementById("content");
         if (!TextUtils.isEmpty(articleBean.getTranslationUrl())) {
             String filename = Constants.PATH_DOWNLOAD + "/" + articleBean.getTitle() + "_yi.html";
-            FileUtils.TextToFile(filename, content.toString());
+            String text = "<P>" + articleBean.getTitle() + "</P><P></P>" + content.toString();
+            text = getHtml(text);
+            FileUtils.TextToFile(filename, text);
             articleBean.translationPath = filename;
         }
         if (onDownload != null) {
             onDownload.onFinished("ok--2");
         }
+    }
+
+    private String getHtml(String text) {
+        return "<!DOCTYPE html>\n<html>" + header + body + text + endbody + "</html>";
     }
 
     private void parseData(Document data) {
@@ -161,7 +171,9 @@ public class Task {
         }
 
         String filename = Constants.PATH_DOWNLOAD + "/" + articleBean.getTitle() + ".html";
-        FileUtils.TextToFile(filename, content);
+        String text = "<P>" + articleBean.getTitle() + "</P><P></P>" + content.toString();
+        text = getHtml(text);
+        FileUtils.TextToFile(filename, text);
         articleBean.textPath = filename;
     }
 }

@@ -22,6 +22,7 @@ import java.util.logging.Level;
 import example.com.zztest.data.Constants;
 import example.com.zztest.utils.FileUtils;
 import okhttp3.OkHttpClient;
+import okhttp3.Response;
 
 public class HttpRequest {
 
@@ -92,7 +93,7 @@ public class HttpRequest {
                 Document doc = null;
                 try {
                     doc = Jsoup.connect(url).get();
-                    Log.i(TAG, "doc = " + doc.toString());
+                    //Log.i(TAG, "doc = " + doc.toString());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
