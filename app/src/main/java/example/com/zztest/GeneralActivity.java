@@ -10,6 +10,7 @@ import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -29,6 +30,9 @@ import example.com.zztest.view.WordView;
 public class GeneralActivity extends BaseActivity {
 
     private static final String TAG = "GeneralActivity";
+    private static final int ARTICLE_FILE = 0;
+    private static final int ARTICLE_TARNSLATION = 1;
+    private static final int ARTICLE_WORD = 2;
 
     @BindView(R.id.tablayout)
     TabLayout tablayout;
@@ -73,6 +77,46 @@ public class GeneralActivity extends BaseActivity {
         initView();
         initWebview();
         loadAudio();
+        initListener();
+    }
+
+    private void initListener() {
+        tablayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+
+                showView(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+    }
+
+    private void showView(int position) {
+        if (position == ARTICLE_FILE){
+            mWebView.setVisibility(View.VISIBLE);
+            textview.setVisibility(View.GONE);
+            wordview.setVisibility(View.GONE);
+        }
+        if (position == ARTICLE_TARNSLATION) {
+            mWebView.setVisibility(View.GONE);
+            textview.setVisibility(View.VISIBLE);
+            wordview.setVisibility(View.GONE);
+        }
+        if (position == ARTICLE_WORD) {
+            wordview.setVisibility(View.VISIBLE);
+            mWebView.setVisibility(View.GONE);
+            textview.setVisibility(View.GONE);
+        }
+
     }
 
     private void loadAudio() {
@@ -117,11 +161,10 @@ public class GeneralActivity extends BaseActivity {
                 });
             }
 
-//            totaltime = mp.getDuration();
-//
-//            TVTotalTime.setText(getTime(totaltime));
-//            mSeekBar.setMax(totaltime);
-//            mSeekBar.setProgress(mp.getCurrentPosition());
+            totaltime = mp.getDuration();
+            TVTotalTime.setText(getTime(totaltime));
+            mSeekBar.setMax(totaltime);
+            mSeekBar.setProgress(mp.getCurrentPosition());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -171,6 +214,7 @@ public class GeneralActivity extends BaseActivity {
         if (!TextUtils.isEmpty(articleBean.lrcPath)) {
             tablayout.addTab(tablayout.newTab().setText("subtitle"));
         }
+        showView(0);
     }
 
     private void initWebview() {

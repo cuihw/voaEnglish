@@ -39,7 +39,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/audio_seek"
-        android:layout_below="@+id/webview">
+        android:text="sss"
+        android:layout_below="@+id/tablayout">
     </EditText>
 
     <example.com.zztest.view.WordView
@@ -47,7 +48,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/audio_seek"
-        android:layout_below="@+id/webview"/>
+        android:layout_below="@+id/tablayout"/>
 
     <RelativeLayout
         android:id="@+id/audio_seek"
